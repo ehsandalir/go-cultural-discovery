@@ -1,0 +1,109 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Vazirmatn", "Sora", system-ui, sans-serif;
+  --font-display: "Sora", "Vazirmatn", system-ui, sans-serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-glow: var(--glow);
+  --color-q-dark-deep: var(--q-dark-deep);
+  --color-q-dark-light: var(--q-dark-light);
+  --color-q-bright-deep: var(--q-bright-deep);
+  --color-q-bright-light: var(--q-bright-light);
+  --color-warning: var(--warning);
+  --color-sidebar: var(--card);
+  --color-sidebar-foreground: var(--foreground);
+  --color-sidebar-primary: var(--primary);
+  --color-sidebar-primary-foreground: var(--primary-foreground);
+  --color-sidebar-accent: var(--accent);
+  --color-sidebar-accent-foreground: var(--accent-foreground);
+  --color-sidebar-border: var(--border);
+  --color-sidebar-ring: var(--ring);
+}
+
+/* Dark-first: the cinematic palette lives on :root */
+:root {
+  --radius: 0.875rem;
+  --background: oklch(0.14 0.018 285);
+  --foreground: oklch(0.95 0.01 290);
+  --card: oklch(0.18 0.022 285);
+  --card-foreground: oklch(0.95 0.01 290);
+  --popover: oklch(0.19 0.024 285);
+  --popover-foreground: oklch(0.95 0.01 290);
+  --primary: oklch(0.78 0.11 290);
+  --primary-foreground: oklch(0.16 0.03 285);
+  --secondary: oklch(0.23 0.025 285);
+  --secondary-foreground: oklch(0.93 0.01 290);
+  --muted: oklch(0.22 0.02 285);
+  --muted-foreground: oklch(0.72 0.025 290);
+  --accent: oklch(0.27 0.05 285);
+  --accent-foreground: oklch(0.95 0.01 290);
+  --destructive: oklch(0.65 0.2 22);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 13%);
+  --ring: oklch(0.78 0.11 290);
+  --glow: oklch(0.6 0.2 280);
+  --warning: oklch(0.82 0.13 80);
+  --q-dark-deep: oklch(0.55 0.14 280);
+  --q-dark-light: oklch(0.65 0.17 15);
+  --q-bright-deep: oklch(0.72 0.1 200);
+  --q-bright-light: oklch(0.85 0.12 95);
+  --gradient-hero: linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--background) 70%, transparent) 55%, var(--background) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--primary), var(--glow));
+  --shadow-glow: 0 20px 60px -20px color-mix(in oklab, var(--glow) 55%, transparent);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html { color-scheme: dark; }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; line-height: 1.3; }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+}
+
+@utility glass {
+  background: color-mix(in oklab, var(--card) 72%, transparent);
+  backdrop-filter: blur(18px);
+}
+@utility bg-hero-fade { background: var(--gradient-hero); }
+@utility text-gradient {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@utility shadow-glow { box-shadow: var(--shadow-glow); }

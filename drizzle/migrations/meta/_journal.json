@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1793309326617,
+      "tag": "0000_phase1_foundation",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793346320270,
+      "tag": "0001_go_private_onboarding_and_request_limits",
+      "breakpoints": true
+    }
+  ]
+}
