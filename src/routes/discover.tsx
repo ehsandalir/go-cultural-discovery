@@ -9,9 +9,8 @@ import { DemoBadge, PageHeader, PhaseBadge } from "@/components/go/shell";
 type Search = { vibe?: string };
 
 export const Route = createFileRoute("/discover")({
-  validateSearch: (s: Record<string, unknown>): Search => ({
-    vibe: typeof s.vibe === "string" && getVibe(s.vibe) ? s.vibe : undefined,
-  }),
+  validateSearch: (s: Record<string, unknown>): Search =>
+    typeof s['vibe'] === "string" && getVibe(s['vibe']) ? { vibe: s['vibe'] } : {},
   head: () => ({
     meta: [
       { title: "Discover by Vibe — GO" },
@@ -27,7 +26,7 @@ function Discover() {
   const { t } = useI18n();
   const { vibe } = Route.useSearch();
   const navigate = useNavigate({ from: "/discover" });
-  const select = (id: string) => navigate({ search: { vibe: id === vibe ? undefined : id }, replace: true, resetScroll: false });
+  const select = (id: string) => navigate({ search: id === vibe ? {} : { vibe: id }, replace: true, resetScroll: false });
   const selected = vibe ? getVibe(vibe) : undefined;
   const matches = selected ? DEMO_WORKS.filter((w) => w.primaryVibe === selected.id || w.secondaryVibes.includes(selected.id)) : [];
 
@@ -50,7 +49,7 @@ function Discover() {
               </div>
             ))}
           </div>
-          <SpectrumMap selected={vibe} onSelect={select} />
+          <SpectrumMap {...(vibe ? { selected: vibe } : {})} onSelect={select} />
         </div>
 
         <div className="mt-8 rounded-2xl border bg-card p-6" aria-live="polite">

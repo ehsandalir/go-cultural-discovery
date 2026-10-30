@@ -59,7 +59,10 @@ function ProfilePage() {
       .from("profiles")
       .upsert({ id: me.data.user.id, display_name: name.trim().slice(0, 60) || null, preferred_language: lang, updated_at: new Date().toISOString() });
     setSaving(false);
-    if (error) return toast.error(t({ fa: "ذخیره نشد", en: "Could not save" }));
+    if (error) {
+      toast.error(t({ fa: "ذخیره نشد", en: "Could not save" }));
+      return;
+    }
     setLang(lang);
     qc.invalidateQueries({ queryKey: ["me"] });
     toast.success(t({ fa: "ذخیره شد", en: "Saved" }));
@@ -71,7 +74,7 @@ function ProfilePage() {
 
   return (
     <>
-      <PageHeader title={t({ fa: "پروفایل", en: "Profile" })} subtitle={user?.email} />
+      <PageHeader title={t({ fa: "پروفایل", en: "Profile" })} subtitle={user?.email ?? ""} />
       <div className="grid gap-6 pb-16 lg:grid-cols-2">
         <form onSubmit={save} className="space-y-4 rounded-2xl border bg-card p-6">
           <h2 className="text-lg font-semibold">{t({ fa: "حساب", en: "Account" })}</h2>

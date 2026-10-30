@@ -12,7 +12,8 @@ type Search = { redirect?: string };
 const safePath = (p?: string) => (p && p.startsWith("/") && !p.startsWith("//") ? p : "/profile");
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>): Search => ({ redirect: typeof s.redirect === "string" ? s.redirect : undefined }),
+  validateSearch: (s: Record<string, unknown>): Search =>
+    typeof s['redirect'] === "string" ? { redirect: s['redirect'] } : {},
   head: () => ({
     meta: [
       { title: "Sign in — GO" },
