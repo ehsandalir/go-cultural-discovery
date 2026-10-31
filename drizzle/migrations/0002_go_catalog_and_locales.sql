@@ -210,3 +210,27 @@ CREATE POLICY go_scores_update_admin ON public.go_work_vibe_scores FOR UPDATE TO
  WITH CHECK ((select public.has_role((select auth.uid()),'admin'::public.app_role)));
 CREATE POLICY go_scores_delete_admin ON public.go_work_vibe_scores FOR DELETE TO authenticated
  USING ((select public.has_role((select auth.uid()),'admin'::public.app_role)));
+
+-- Automatically create a complete 24-vibe score vector for every work.
+-- Editorially overridden scores are preserved when the position changes.
+CREATE FUNCTION public.go_seed_vibe_scores() RETURNS trigger
+LANGUAGE plpgsql SET search_path = public AS $$
+BEGIN
+ INSERT INTO public.go_work_vibe_scores(work_id,vibe_id,score,scoring_method)
+ SELECT NEW.id,v.id,
+    (CASE WHEN v.id=NEW.primary_vibe THEN 100 ELSE
+      greatest(0,least(100,round(100 - 0.8 * sqrt(
+        power(NEW.spectrum_x-v.spectrum_x,2)::float8 +
+        power(NEW.spectrum_y-v.spectrum_y,2)::float8
+      )))) END)::smallint,
+    'spectrum-seed'
+ FROM public.go_vibes v
+ ON CONFLICT(work_id,vibe_id) DO UPDATE
+ SET score=EXCLUDED.score,updated_at=now()
+ WHERE public.go_work_vibe_scores.scoring_method='spectrum-seed';
+ RETURN NEW;
+END $$;
+REVOKE ALL ON FUNCTION public.go_seed_vibe_scores() FROM PUBLIC,anon,authenticated;
+CREATE TRIGGER go_works_fill_vibe_scores
+AFTER INSERT OR UPDATE OF primary_vibe,spectrum_x,spectrum_y ON public.go_works
+FOR EACH ROW EXECUTE FUNCTION public.go_seed_vibe_scores();
