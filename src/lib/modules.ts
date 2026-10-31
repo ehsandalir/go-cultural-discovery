@@ -4,9 +4,9 @@ import type { Bi } from "./i18n";
 export type ModuleId = "watch" | "read" | "listen";
 
 export const MODULES: { id: ModuleId; brand: string; name: Bi; tagline: Bi; icon: typeof BookOpen }[] = [
-  { id: "watch", brand: "GoWatch", name: { fa: "تماشا", en: "Watch" }, tagline: { fa: "فیلم‌ها، با حسی که می‌خواهی", en: "Films, by the feeling you seek" }, icon: Clapperboard },
-  { id: "read", brand: "GoRead", name: { fa: "خواندن", en: "Read" }, tagline: { fa: "کتاب‌ها و جستارها", en: "Books and essays" }, icon: BookOpen },
-  { id: "listen", brand: "GoListen", name: { fa: "شنیدن", en: "Listen" }, tagline: { fa: "موسیقی برای هر حال", en: "Music for every mood" }, icon: Headphones },
+  { id: "watch", brand: "GoWatch", name: { fa: "تماشا", en: "Watch" }, tagline: { fa: "فیلم‌هایی که دوست داری", en: "Movies you enjoy" }, icon: Clapperboard },
+  { id: "read", brand: "GoRead", name: { fa: "خواندن", en: "Read" }, tagline: { fa: "کتاب‌هایی که خوانده‌ای یا دوست داری", en: "Books you have enjoyed" }, icon: BookOpen },
+  { id: "listen", brand: "GoListen", name: { fa: "شنیدن", en: "Listen" }, tagline: { fa: "آهنگ‌هایی که گوش می‌دهی", en: "Music you listen to" }, icon: Headphones },
 ];
 
 export const isModuleId = (v: string): v is ModuleId => v === "watch" || v === "read" || v === "listen";
