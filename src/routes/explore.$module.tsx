@@ -6,10 +6,8 @@ import { Search, ChevronLeft, ChevronRight, Check, Loader2, Globe2, Plus, Clappe
 import { supabase } from '@/integrations/supabase/client';
 import { useI18n } from '@/lib/i18n';
 import { MODULES, isModuleId } from '@/lib/modules';
-import { VIBES } from '@/lib/vibes';
-import { displayTitle, visibleWorks, PAGE_SIZE, SPOKEN_LANGUAGES, type SpokenLanguage } from '@/lib/catalog';
+import { displayTitle, visibleWorks, unbiasedDiscoveryOrder, PAGE_SIZE, SPOKEN_LANGUAGES, type SpokenLanguage } from '@/lib/catalog';
 import { addInterest, searchOnlineWorks, type OnlineHit } from '@/lib/catalog.functions';
-import { VibeTag } from '@/components/go/vibe';
 import { PageHeader } from '@/components/go/shell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,18 +17,18 @@ type Work=Database['public']['Tables']['go_works']['Row'];
 export const Route=createFileRoute('/explore/$module')({
   loader:({params})=>{if(!isModuleId(params.module)) throw notFound();return {module:params.module};},
   head:({loaderData})=>({meta:[{title:`${MODULES.find(m=>m.id===loaderData?.module)?.brand??'GO'} — GO`},
-    {name:'description',content:'Explore culture by vibe and your spoken language.'}]}),
+    {name:'description',content:'Browse films, books and music and save whatever you genuinely enjoy.'}]}),
   component:ModulePage
 });
 
 function ModulePage(){
-  const {t,lang:uiLang}=useI18n();
+  const {t}=useI18n();
   const {module}=Route.useLoaderData();
   const navigate=useNavigate();
   const meta=MODULES.find(m=>m.id===module)!;
   const [spoken,setSpoken]=useState<SpokenLanguage>('fa');
-  const [vibe,setVibe]=useState('');
-  const [query,setQuery]=useState('');
+  const [discoverySeed,setDiscoverySeed]=useState('go-guest');
+    const [query,setQuery]=useState('');
   const [page,setPage]=useState(0);
   const [onlineQuery,setOnlineQuery]=useState('');
   const [online,setOnline]=useState<OnlineHit[]>([]);
@@ -51,15 +49,16 @@ function ModulePage(){
     let mounted=true;
     void supabase.auth.getUser().then(async({data})=>{
       if(!data.user) return;
+      if(mounted) setDiscoverySeed(data.user.id);
       const {data:profile}=await supabase.from('profiles').select('spoken_language').eq('id',data.user.id).maybeSingle();
       const matched=SPOKEN_LANGUAGES.find(l=>l.value===profile?.spoken_language);
       if(mounted&&matched) setSpoken(matched.value);
     });
     return ()=>{mounted=false;};
   },[]);
-  const works=useMemo(()=>visibleWorks(all.data?.works??[],module,spoken,vibe||undefined)
+  const works=useMemo(()=>unbiasedDiscoveryOrder(visibleWorks(all.data?.works??[],module,spoken),discoverySeed+'-'+module)
     .filter(w=>!query.trim() || [w.canonical_title,displayTitle(w,all.data?.editions??[],spoken),w.creator]
-      .some(s=>s.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))),[all.data,module,spoken,vibe,query]);
+      .some(s=>s.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))),[all.data,module,spoken,query,discoverySeed]);
   const items=works.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);
   const totalPages=Math.ceil(works.length/PAGE_SIZE);
   function resetFilters(){setPage(0);setOnline([]);setOnlineNotice('');}
@@ -108,12 +107,6 @@ function ModulePage(){
           {SPOKEN_LANGUAGES.map(l=><option key={l.value} value={l.value}>{l.label}</option>)}
         </select>
       </label>
-      <label className="flex flex-col gap-1 text-xs text-muted-foreground">{t({fa:'وایب',en:'Vibe'})}
-        <select className="h-10 max-w-56 rounded-lg border bg-background px-3 text-sm text-foreground" value={vibe} onChange={e=>{setVibe(e.target.value);setPage(0);}}>
-          <option value="">{t({fa:'همهٔ وایب‌ها',en:'All vibes'})}</option>
-          {VIBES.map(v=><option key={v.id} value={v.id}>{v.name[uiLang]}</option>)}
-        </select>
-      </label>
       <label className="flex min-w-48 flex-1 flex-col gap-1 text-xs text-muted-foreground">{t({fa:'جست‌وجو در بانک GO',en:'Search GO catalog'})}
         <div className="relative"><Search className="pointer-events-none absolute end-3 top-3 size-4"/><Input value={query} onChange={e=>{setQuery(e.target.value);setPage(0);}} placeholder={t({fa:'نام اثر یا خالق',en:'Title or creator'})} className="pe-10"/></div>
       </label>
@@ -123,7 +116,7 @@ function ModulePage(){
       {all.error && <span className="ms-2 text-destructive">{t({fa:'اتصال کاتالوگ برقرار نیست. Migration دیتابیس را بررسی کن.',en:'Catalog unavailable. Check the database migration.'})}</span>}
     </div>
     {!all.isLoading&&!all.error&&works.length===0 && <div className="mb-6 rounded-xl border border-dashed p-6 text-muted-foreground">
-      {t({fa:'هنوز اثر تأییدشده‌ای با این فیلتر یا زبان ثبت نشده است. از جست‌وجوی آنلاین استفاده کن.',en:'No approved works for this filter or language yet. Try online search.'})}
+      {t({fa:'هنوز اثری با این زبان یا عبارت جست‌وجو پیدا نشده است. از جست‌وجوی آنلاین استفاده کن.',en:'No works found for this language or search. Try online search.'})}
     </div>}
     <div className="grid grid-cols-3 gap-2 sm:gap-4">
       {items.map(w=><button key={w.id} type="button" onClick={()=>void remember(w)}
@@ -138,8 +131,6 @@ function ModulePage(){
         <div className="p-2 sm:p-3">
           <div className="line-clamp-2 text-xs font-semibold sm:text-sm">{displayTitle(w,all.data?.editions??[],spoken)}</div>
           {w.creator && <div className="mt-1 truncate text-[11px] text-muted-foreground">{w.creator}</div>}
-          <div className="mt-2"><VibeTag id={w.primary_vibe} primary/></div>
-          <div className="mt-1 text-[10px] text-muted-foreground" dir="ltr">X {w.spectrum_x} · Y {w.spectrum_y}</div>
         </div>
       </button>)}
     </div>
@@ -168,6 +159,6 @@ function ModulePage(){
         </button>)}
       </div>}
     </section>
-    <div className="mt-8"><Button asChild variant="secondary"><Link to="/discover">{t({fa:'کشف بر اساس وایب',en:'Discover by vibe'})}</Link></Button></div>
+    <div className="mt-8"><Button asChild variant="secondary"><Link to="/discover">{t({fa:'بازگشت به انتخاب‌ها',en:'Back to discovery'})}</Link></Button></div>
   </div>;
 }
