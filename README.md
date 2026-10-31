@@ -4,6 +4,7 @@ Bilingual Persian/English cultural discovery app for films, books and music thro
 
 - Lovable project: https://lovable.dev/projects/e3f74c39-baf4-4075-9ccf-b860f5fc3987
 - Source snapshot and verification: [MIGRATION.md](MIGRATION.md)
+- **Moving editing to Google AI Studio:** [safe GitHub import + copy-ready first prompt](GO_AI_STUDIO_HANDOFF.md) (start from main; personalized room work stays in draft PR #3).
 
 ## Local development
 
