@@ -10,6 +10,8 @@ import { PageHeader, PhaseBadge } from "@/components/go/shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SPOKEN_LANGUAGES, type SpokenLanguage } from "@/lib/catalog";
+import { countryOptions } from "@/lib/countries";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -24,7 +26,8 @@ export const Route = createFileRoute("/_authenticated/profile")({
 });
 
 function ProfilePage() {
-  const { t, setLang } = useI18n();
+  const { t, setLang, lang: uiLang } = useI18n();
+  const countries=countryOptions(uiLang);
   const qc = useQueryClient();
   const me = useQuery({
     queryKey: ["me"],
@@ -44,20 +47,27 @@ function ProfilePage() {
   const [name, setName] = useState("");
   const [lang, setPrefLang] = useState<"fa" | "en">("fa");
   const [saving, setSaving] = useState(false);
+  const [spoken, setSpoken] = useState<SpokenLanguage>("fa");
+  const [country, setCountry] = useState("");
+  const [birthYear, setBirthYear] = useState("");
   useEffect(() => {
     if (me.data?.profile) {
       setName(me.data.profile.display_name ?? "");
-      setPrefLang(me.data.profile.preferred_language as "fa" | "en");
+      setPrefLang(me.data.profile.preferred_language === "fa" ? "fa" : "en");
+      setSpoken((SPOKEN_LANGUAGES.find(l=>l.value===me.data.profile?.spoken_language)?.value??"fa"));
+      setCountry(me.data.profile.country??"");
+      setBirthYear(me.data.profile.birth_year?.toString()??"");
     }
   }, [me.data]);
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
     if (!me.data) return;
+    if(!country||!birthYear){ toast.error(t({fa:"زبان، کشور و سال تولد را تکمیل کن",en:"Complete language, country and birth year"}));return; }
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
-      .upsert({ id: me.data.user.id, display_name: name.trim().slice(0, 60) || null, preferred_language: lang, updated_at: new Date().toISOString() });
+      .upsert({ id: me.data.user.id, display_name: name.trim().slice(0, 60) || null, preferred_language: lang, spoken_language: spoken, country, birth_year: Number(birthYear), updated_at: new Date().toISOString() });
     setSaving(false);
     if (error) {
       toast.error(t({ fa: "ذخیره نشد", en: "Could not save" }));
@@ -95,6 +105,27 @@ function ProfilePage() {
                 </Button>
               ))}
             </div>
+          </div>
+          {(!me.data?.profile?.country || !me.data?.profile?.birth_year) && <p className="rounded-lg border border-primary/40 bg-primary/10 p-3 text-sm">{t({fa:"برای کامل شدن ثبت‌نام (از جمله ورود با گوگل)، زبان، کشور و سال تولدت را انتخاب کن.",en:"Complete your registration, including Google sign-in, by choosing language, country and birth year."})}</p>}
+          <div className="space-y-2">
+            <Label htmlFor="spoken">{t({fa:"زبان گفت‌وگو",en:"Spoken language"})}</Label>
+            <select id="spoken" className="h-11 w-full rounded-lg border bg-background px-3 text-foreground" value={spoken} onChange={e=>setSpoken(e.target.value as SpokenLanguage)} required>
+              {SPOKEN_LANGUAGES.map(l=><option key={l.value} value={l.value}>{l.label}</option>)}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="country">{t({fa:"کشور",en:"Country"})}</Label>
+            <select id="country" className="h-11 w-full rounded-lg border bg-background px-3 text-foreground" value={country} onChange={e=>setCountry(e.target.value)} required>
+              <option value="">{t({fa:"کشور را انتخاب کن",en:"Choose country"})}</option>
+              {countries.map(c=><option key={c.code} value={c.code}>{c.label}</option>)}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="birth-year">{t({fa:"سال تولد",en:"Birth year"})}</Label>
+            <select id="birth-year" className="h-11 w-full rounded-lg border bg-background px-3 text-foreground" value={birthYear} onChange={e=>setBirthYear(e.target.value)} required>
+              <option value="">{t({fa:"سال تولد را انتخاب کن",en:"Choose birth year"})}</option>
+              {Array.from({length:new Date().getFullYear()-1899},(_,i)=>new Date().getFullYear()-i).map(year=><option key={year} value={year}>{year}</option>)}
+            </select>
           </div>
           <Button type="submit" disabled={saving} className="rounded-full">{t({ fa: "ذخیره", en: "Save" })}</Button>
         </form>
