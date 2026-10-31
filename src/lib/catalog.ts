@@ -41,7 +41,6 @@ function hash(s: string): number {
 }
 export function unbiasedDiscoveryOrder(works: Work[], seed='go-guest'): Work[] {
   const quadrants: QuadrantId[]=['dark-deep','bright-light','dark-light','bright-deep'];
-  const vibeById=new Map(VIBES.map(v=>[v.id,v]));
   const groups=new Map<string,Work[]>();
   for(const w of works){
     const items=groups.get(w.primary_vibe)??[];
