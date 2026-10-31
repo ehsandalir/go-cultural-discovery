@@ -3,16 +3,15 @@ import { ArrowLeft, Sparkles } from "lucide-react";
 import hero from "@/assets/hero.jpg";
 import { useI18n } from "@/lib/i18n";
 import { MODULES } from "@/lib/modules";
-import { QUADRANTS, VIBES } from "@/lib/vibes";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "GO — Discover culture by vibe" },
-      { name: "description", content: "GO is a Persian-first super app to discover films, books and music by emotional vibe." },
+      { title: "GO — Your films, books and music" },
+      { name: "description", content: "Discover films, books and music you enjoy in GO." },
       { property: "og:title", content: "GO — Discover culture by vibe" },
-      { property: "og:description", content: "Discover → Feel → Understand → Create. Films, books and music by vibe." },
+      { property: "og:description", content: "Choose the cultural works you genuinely enjoy. GO begins with your choices." },
     ],
   }),
   component: Home,
@@ -27,25 +26,25 @@ function Home() {
         <div className="bg-hero-fade absolute inset-0" />
         <div className="relative px-5 pb-16 pt-28 md:pb-24 md:pt-44">
           <p className="mb-4 text-sm tracking-widest text-primary">
-            {t({ fa: "کشف ← حس ← فهم ← خلق", en: "Discover → Feel → Understand → Create" })}
+            {t({ fa: "فیلم · کتاب · موسیقی", en: "Films · Books · Music" })}
           </p>
           <h1 className="max-w-2xl text-4xl font-bold md:text-6xl">
-            {t({ fa: "اثر بعدی‌ات را با حسش پیدا کن", en: "Find your next work by how it feels" })}
+            {t({ fa: "از چیزهایی شروع کن که واقعاً دوست داری", en: "Start with what you genuinely love" })}
           </h1>
           <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-            {t({ fa: "فیلم، کتاب و موسیقی — نه فقط بر اساس ژانر، بلکه بر اساس وایب.", en: "Films, books and music — not just by genre, but by vibe." })}
+            {t({ fa: "فیلم‌ها، کتاب‌ها و آهنگ‌هایی را انتخاب کن که با آن‌ها ارتباط داری. هیچ پاسخ درست یا غلطی وجود ندارد.", en: "Choose the films, books and songs that matter to you. There are no right or wrong answers." })}
           </p>
           <Button asChild size="lg" className="mt-8 rounded-full shadow-glow">
             <Link to="/discover">
               <Sparkles className="size-4" />
-              {t({ fa: "وایبت را انتخاب کن", en: "Choose your vibe" })}
+              {t({ fa: "انتخاب‌هایم را شروع کنم", en: "Start choosing" })}
             </Link>
           </Button>
         </div>
       </section>
 
       <section className="py-12">
-        <h2 className="mb-6 text-2xl font-semibold">{t({ fa: "دنیاهای GO", en: "GO worlds" })}</h2>
+        <h2 className="mb-6 text-2xl font-semibold">{t({ fa: "چه چیزی دوست داری؟", en: "What do you enjoy?" })}</h2>
         <div className="grid gap-4 md:grid-cols-3">
           {MODULES.map((m) => (
             <Link
@@ -65,18 +64,11 @@ function Home() {
       </section>
 
       <section className="pb-16">
-        <h2 className="text-2xl font-semibold">{t({ fa: "۲۴ وایب، چهار قلمرو", en: "24 vibes, four realms" })}</h2>
-        <p className="mb-6 mt-1 text-muted-foreground">{t({ fa: "یک زبان احساسی مشترک برای فیلم، کتاب و موسیقی.", en: "One shared emotional language for film, books and music." })}</p>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {QUADRANTS.map((q) => (
-            <Link key={q.id} to="/discover" search={{ vibe: VIBES.find((v) => v.quadrant === q.id)!.id }} className="rounded-2xl border bg-card p-5 hover:border-primary/50">
-              <div className={`mb-3 h-1 w-10 rounded-full ${q.bgClass}`} />
-              <div className={`font-semibold ${q.colorClass}`}>{t(q.name)}</div>
-              <div className="mt-2 text-sm text-muted-foreground">
-                {VIBES.filter((v) => v.quadrant === q.id).slice(0, 3).map((v) => t(v.name)).join(" · ")}
-              </div>
-            </Link>
-          ))}
+        <div className="rounded-2xl border bg-card/60 p-6 md:p-8">
+          <h2 className="text-xl font-semibold">{t({ fa: "این انتخاب‌ها فقط برای تو هستند", en: "These choices are yours" })}</h2>
+          <p className="mt-2 max-w-2xl text-muted-foreground">
+            {t({ fa: "نه لازم است همه‌چیز را بشناسی، نه لازم است چیزی را انتخاب کنی که دیگران تأیید می‌کنند. فقط همان‌هایی را بزن که واقعاً دوستشان داری.", en: "You don’t have to know everything or choose what other people approve of. Just pick the things you actually enjoy." })}
+          </p>
         </div>
       </section>
     </>
