@@ -6,7 +6,7 @@ export type Category = typeof CATEGORIES[number];
 export const favoriteSchema = z.object({ title: z.string().trim().min(1).max(120), source: z.enum(['manual', 'tmdb', 'google-books', 'spotify']), id: z.string().max(120).optional() }).strict();
 const favoriteList = z.array(favoriteSchema).max(3).refine(items => new Set(items.map(i => i.title.toLowerCase())).size === items.length, 'Favorites must be distinct');
 export const favoritesSchema = z.object({ movies: favoriteList, music: favoriteList, books: favoriteList, style: favoriteList }).strict();
-export const preferencesSchema = z.object({ name: z.string().trim().max(60), age: z.number().int().min(1).max(120).nullable(), gender: z.string().trim().max(60).nullable(), country: z.string().trim().max(80), language: z.string().trim().min(1).max(60), favorites: favoritesSchema, saveConsent: z.literal(true), aiConsent: z.boolean() }).strict();
+export const preferencesSchema = z.object({ name: z.string().trim().max(60), birthYear: z.number().int().min(1900).max(new Date().getFullYear()).nullable(), gender: z.string().trim().max(60).nullable(), country: z.string().trim().length(2), language: z.enum(['fa','en','fr','es','de']), favorites: favoritesSchema, saveConsent: z.literal(true), aiConsent: z.boolean() }).strict();
 export type Favorite = z.infer<typeof favoriteSchema>;
 export type Favorites = z.infer<typeof favoritesSchema>;
 export type Preferences = z.infer<typeof preferencesSchema>;

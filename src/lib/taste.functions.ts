@@ -9,7 +9,7 @@ export const getPreferences = createServerFn({ method: 'GET' }).middleware([requ
   return data;
 });
 export const savePreferences = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth]).inputValidator(input => preferencesSchema.parse(input)).handler(async ({ data, context }) => {
-  const { error } = await context.supabase.from('go_preferences').upsert({ user_id: context.userId, name: data.name, age: data.age, gender: data.gender, country: data.country, language: data.language, favorites: data.favorites, save_consent: true, ai_consent: data.aiConsent, consent_version: 'go-taste-v1' });
+  const { error } = await context.supabase.from('go_preferences').upsert({ user_id: context.userId, name: data.name, birth_year: data.birthYear, age: null, gender: data.gender, country: data.country, language: data.language, favorites: data.favorites, save_consent: true, ai_consent: data.aiConsent, consent_version: 'go-taste-v1' });
   if (error) throw new Error('Your preferences could not be saved.');
   return { saved: true };
 });

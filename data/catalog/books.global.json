@@ -1,0 +1,338 @@
+[
+  [
+    {
+      "title": "The Stranger",
+      "creator": "Albert Camus"
+    },
+    {
+      "title": "Nausea",
+      "creator": "Jean-Paul Sartre"
+    },
+    {
+      "title": "The Trial",
+      "creator": "Franz Kafka"
+    }
+  ],
+  [
+    {
+      "title": "A Little Life",
+      "creator": "Hanya Yanagihara"
+    },
+    {
+      "title": "Never Let Me Go",
+      "creator": "Kazuo Ishiguro"
+    },
+    {
+      "title": "The Road",
+      "creator": "Cormac McCarthy"
+    }
+  ],
+  [
+    {
+      "title": "Norwegian Wood",
+      "creator": "Haruki Murakami"
+    },
+    {
+      "title": "The Remains of the Day",
+      "creator": "Kazuo Ishiguro"
+    },
+    {
+      "title": "Stoner",
+      "creator": "John Williams"
+    }
+  ],
+  [
+    {
+      "title": "The Bell Jar",
+      "creator": "Sylvia Plath"
+    },
+    {
+      "title": "We Have Always Lived in the Castle",
+      "creator": "Shirley Jackson"
+    },
+    {
+      "title": "The Collector",
+      "creator": "John Fowles"
+    }
+  ],
+  [
+    {
+      "title": "Kafka on the Shore",
+      "creator": "Haruki Murakami"
+    },
+    {
+      "title": "The Master and Margarita",
+      "creator": "Mikhail Bulgakov"
+    },
+    {
+      "title": "The Metamorphosis",
+      "creator": "Franz Kafka"
+    }
+  ],
+  [
+    {
+      "title": "Ficciones",
+      "creator": "Jorge Luis Borges"
+    },
+    {
+      "title": "If on a winter's night a traveler",
+      "creator": "Italo Calvino"
+    },
+    {
+      "title": "Gödel, Escher, Bach",
+      "creator": "Douglas Hofstadter"
+    }
+  ],
+  [
+    {
+      "title": "The Secret History",
+      "creator": "Donna Tartt"
+    },
+    {
+      "title": "The Girl with the Dragon Tattoo",
+      "creator": "Stieg Larsson"
+    },
+    {
+      "title": "In Cold Blood",
+      "creator": "Truman Capote"
+    }
+  ],
+  [
+    {
+      "title": "A Clockwork Orange",
+      "creator": "Anthony Burgess"
+    },
+    {
+      "title": "Trainspotting",
+      "creator": "Irvine Welsh"
+    },
+    {
+      "title": "Fear and Loathing in Las Vegas",
+      "creator": "Hunter S. Thompson"
+    }
+  ],
+  [
+    {
+      "title": "1984",
+      "creator": "George Orwell"
+    },
+    {
+      "title": "The Dispossessed",
+      "creator": "Ursula K. Le Guin"
+    },
+    {
+      "title": "The Handmaid's Tale",
+      "creator": "Margaret Atwood"
+    }
+  ],
+  [
+    {
+      "title": "Catch-22",
+      "creator": "Joseph Heller"
+    },
+    {
+      "title": "Slaughterhouse-Five",
+      "creator": "Kurt Vonnegut"
+    },
+    {
+      "title": "Good Omens",
+      "creator": "Terry Pratchett and Neil Gaiman"
+    }
+  ],
+  [
+    {
+      "title": "Lolita",
+      "creator": "Vladimir Nabokov"
+    },
+    {
+      "title": "Damage",
+      "creator": "Josephine Hart"
+    },
+    {
+      "title": "Dangerous Liaisons",
+      "creator": "Pierre Choderlos de Laclos"
+    }
+  ],
+  [
+    {
+      "title": "The Hunger Games",
+      "creator": "Suzanne Collins"
+    },
+    {
+      "title": "The Bourne Identity",
+      "creator": "Robert Ludlum"
+    },
+    {
+      "title": "Jurassic Park",
+      "creator": "Michael Crichton"
+    }
+  ],
+  [
+    {
+      "title": "The Alchemist",
+      "creator": "Paulo Coelho"
+    },
+    {
+      "title": "The Midnight Library",
+      "creator": "Matt Haig"
+    },
+    {
+      "title": "The Book Thief",
+      "creator": "Markus Zusak"
+    }
+  ],
+  [
+    {
+      "title": "A Man Called Ove",
+      "creator": "Fredrik Backman"
+    },
+    {
+      "title": "The Kite Runner",
+      "creator": "Khaled Hosseini"
+    },
+    {
+      "title": "The House in the Cerulean Sea",
+      "creator": "TJ Klune"
+    }
+  ],
+  [
+    {
+      "title": "Persuasion",
+      "creator": "Jane Austen"
+    },
+    {
+      "title": "One Day",
+      "creator": "David Nicholls"
+    },
+    {
+      "title": "The Time Traveler's Wife",
+      "creator": "Audrey Niffenegger"
+    }
+  ],
+  [
+    {
+      "title": "Siddhartha",
+      "creator": "Hermann Hesse"
+    },
+    {
+      "title": "The Prophet",
+      "creator": "Kahlil Gibran"
+    },
+    {
+      "title": "The Little Prince",
+      "creator": "Antoine de Saint-Exupéry"
+    }
+  ],
+  [
+    {
+      "title": "Meditations",
+      "creator": "Marcus Aurelius"
+    },
+    {
+      "title": "The Art of Happiness",
+      "creator": "Dalai Lama and Howard Cutler"
+    },
+    {
+      "title": "The Book of Tea",
+      "creator": "Kakuzō Okakura"
+    }
+  ],
+  [
+    {
+      "title": "The Sense of an Ending",
+      "creator": "Julian Barnes"
+    },
+    {
+      "title": "The Summer Book",
+      "creator": "Tove Jansson"
+    },
+    {
+      "title": "The Ocean at the End of the Lane",
+      "creator": "Neil Gaiman"
+    }
+  ],
+  [
+    {
+      "title": "The Housekeeper and the Professor",
+      "creator": "Yoko Ogawa"
+    },
+    {
+      "title": "Anne of Green Gables",
+      "creator": "L. M. Montgomery"
+    },
+    {
+      "title": "The Wind in the Willows",
+      "creator": "Kenneth Grahame"
+    }
+  ],
+  [
+    {
+      "title": "Matilda",
+      "creator": "Roald Dahl"
+    },
+    {
+      "title": "The Hitchhiker's Guide to the Galaxy",
+      "creator": "Douglas Adams"
+    },
+    {
+      "title": "Howl's Moving Castle",
+      "creator": "Diana Wynne Jones"
+    }
+  ],
+  [
+    {
+      "title": "The Rosie Project",
+      "creator": "Graeme Simsion"
+    },
+    {
+      "title": "Bridget Jones's Diary",
+      "creator": "Helen Fielding"
+    },
+    {
+      "title": "The No. 1 Ladies' Detective Agency",
+      "creator": "Alexander McCall Smith"
+    }
+  ],
+  [
+    {
+      "title": "Pride and Prejudice",
+      "creator": "Jane Austen"
+    },
+    {
+      "title": "The Night Circus",
+      "creator": "Erin Morgenstern"
+    },
+    {
+      "title": "The Notebook",
+      "creator": "Nicholas Sparks"
+    }
+  ],
+  [
+    {
+      "title": "The Boy, the Mole, the Fox and the Horse",
+      "creator": "Charlie Mackesy"
+    },
+    {
+      "title": "The Secret Garden",
+      "creator": "Frances Hodgson Burnett"
+    },
+    {
+      "title": "The Happiness Project",
+      "creator": "Gretchen Rubin"
+    }
+  ],
+  [
+    {
+      "title": "The Princess Bride",
+      "creator": "William Goldman"
+    },
+    {
+      "title": "The Adventures of Tintin",
+      "creator": "Hergé"
+    },
+    {
+      "title": "The Witches",
+      "creator": "Roald Dahl"
+    }
+  ]
+]

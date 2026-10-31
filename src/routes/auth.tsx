@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authReturnPath } from "@/lib/auth-return-path";
+import { SPOKEN_LANGUAGES, type SpokenLanguage } from "@/lib/catalog";
+import { countryOptions } from "@/lib/countries";
 
 type Search = { next?: string };
 
@@ -30,12 +32,16 @@ export const Route = createFileRoute("/auth")({
 type Mode = "signin" | "signup" | "forgot";
 
 function AuthPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const countries=countryOptions(lang);
   const { next } = Route.useSearch();
   const returnPath = next ?? "/profile";
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [country, setCountry] = useState("");
+  const [spokenLanguage, setSpokenLanguage] = useState<SpokenLanguage>("fa");
+  const [birthYear, setBirthYear] = useState("");
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
 
@@ -75,7 +81,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       } else if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: new URL(`/auth?next=${encodeURIComponent(returnPath)}`, window.location.origin).href } });
+        const { error } = await supabase.auth.signUp({ email, password, options: { data: { country, spoken_language: spokenLanguage, birth_year: birthYear }, emailRedirectTo: new URL(`/auth?next=${encodeURIComponent(returnPath)}`, window.location.origin).href } });
         if (error) throw error;
         setNotice(t({ fa: "ایمیل تأیید فرستاده شد. برای فعال‌سازی حساب، لینک را باز کن.", en: "Confirmation email sent. Open the link to activate your account." }));
       } else {
@@ -130,6 +136,30 @@ function AuthPage() {
           <div className="space-y-2">
             <Label htmlFor="password">{t({ fa: "رمز عبور", en: "Password" })}</Label>
             <Input id="password" type="password" dir="ltr" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === "signup" ? "new-password" : "current-password"} />
+          </div>
+        )}
+        {mode === "signup" && (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="spoken-language">{t({ fa: "با چه زبانی صحبت می‌کنی؟", en: "What language do you speak?" })}</Label>
+              <select id="spoken-language" className="h-11 w-full rounded-lg border bg-background px-3 text-foreground" value={spokenLanguage} onChange={e => setSpokenLanguage(e.target.value as SpokenLanguage)} required>
+                {SPOKEN_LANGUAGES.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="country">{t({ fa: "کشور", en: "Country" })}</Label>
+              <select id="country" className="h-11 w-full rounded-lg border bg-background px-3 text-foreground" value={country} onChange={e => setCountry(e.target.value)} required>
+                <option value="">{t({ fa: "کشورت را انتخاب کن", en: "Choose your country" })}</option>
+                {countries.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="birth-year">{t({ fa: "سال تولد", en: "Birth year" })}</Label>
+              <select id="birth-year" className="h-11 w-full rounded-lg border bg-background px-3 text-foreground" value={birthYear} onChange={e => setBirthYear(e.target.value)} required>
+                <option value="">{t({ fa: "سال تولد را انتخاب کن", en: "Choose birth year" })}</option>
+                {Array.from({length:new Date().getFullYear()-1899},(_,i)=>new Date().getFullYear()-i).map(year=><option key={year} value={year}>{year}</option>)}
+              </select>
+            </div>
           </div>
         )}
         {notice && <p className="rounded-xl border border-primary/40 bg-primary/10 p-3 text-sm">{notice}</p>}
