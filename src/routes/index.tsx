@@ -1,10 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Sparkles } from "lucide-react";
-import hero from "@/assets/hero.jpg";
+import { ArrowLeft } from "lucide-react";
+import { PersonalRoomHero } from "@/components/go/personal-room";
 import { useI18n } from "@/lib/i18n";
 import { MODULES } from "@/lib/modules";
 import { QUADRANTS, VIBES } from "@/lib/vibes";
-import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,27 +21,7 @@ function Home() {
   const { t } = useI18n();
   return (
     <>
-      <section className="relative -mx-5 overflow-hidden">
-        <img src={hero} alt="" width={1600} height={912} className="absolute inset-0 h-full w-full object-cover opacity-80" />
-        <div className="bg-hero-fade absolute inset-0" />
-        <div className="relative px-5 pb-16 pt-28 md:pb-24 md:pt-44">
-          <p className="mb-4 text-sm tracking-widest text-primary">
-            {t({ fa: "کشف ← حس ← فهم ← خلق", en: "Discover → Feel → Understand → Create" })}
-          </p>
-          <h1 className="max-w-2xl text-4xl font-bold md:text-6xl">
-            {t({ fa: "اثر بعدی‌ات را با حسش پیدا کن", en: "Find your next work by how it feels" })}
-          </h1>
-          <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-            {t({ fa: "فیلم، کتاب و موسیقی — نه فقط بر اساس ژانر، بلکه بر اساس وایب.", en: "Films, books and music — not just by genre, but by vibe." })}
-          </p>
-          <Button asChild size="lg" className="mt-8 rounded-full shadow-glow">
-            <Link to="/discover">
-              <Sparkles className="size-4" />
-              {t({ fa: "وایبت را انتخاب کن", en: "Choose your vibe" })}
-            </Link>
-          </Button>
-        </div>
-      </section>
+      <PersonalRoomHero />
 
       <section className="py-12">
         <h2 className="mb-6 text-2xl font-semibold">{t({ fa: "دنیاهای GO", en: "GO worlds" })}</h2>
