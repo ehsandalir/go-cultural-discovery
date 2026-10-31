@@ -10,7 +10,7 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "GO — Your films, books and music" },
       { name: "description", content: "Discover films, books and music you enjoy in GO." },
-      { property: "og:title", content: "GO — Discover culture by vibe" },
+      { property: "og:title", content: "GO — Discover films, books and music" },
       { property: "og:description", content: "Choose the cultural works you genuinely enjoy. GO begins with your choices." },
     ],
   }),
