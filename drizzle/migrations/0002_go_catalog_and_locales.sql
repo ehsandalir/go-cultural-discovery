@@ -141,10 +141,72 @@ BEGIN
   INSERT INTO public.profiles (id, display_name, preferred_language, spoken_language, country, birth_year)
   VALUES (NEW.id,
           COALESCE(NEW.raw_user_meta_data->>'display_name', NEW.raw_user_meta_data->>'full_name', split_part(NEW.email,'@',1)),
-          pref_lang, pref_lang,
+          CASE WHEN pref_lang = 'fa' THEN 'fa' ELSE 'en' END, pref_lang,
           left(nullif(NEW.raw_user_meta_data->>'country',''),80),
           CASE WHEN birth_val BETWEEN 1900 AND EXTRACT(YEAR FROM CURRENT_DATE)::int THEN birth_val ELSE NULL END)
   ON CONFLICT (id) DO NOTHING;
   INSERT INTO public.user_roles(user_id,role) VALUES(NEW.id,'user') ON CONFLICT DO NOTHING;
   RETURN NEW;
 END $$;
+
+-- The 24 immutable GO vibes are a database reference set, not free-form labels.
+CREATE TABLE public.go_vibes (
+ id text PRIMARY KEY,
+ spectrum_x smallint NOT NULL CHECK (spectrum_x BETWEEN 0 AND 100),
+ spectrum_y smallint NOT NULL CHECK (spectrum_y BETWEEN 0 AND 100)
+);
+INSERT INTO public.go_vibes(id,spectrum_x,spectrum_y) VALUES
+('existential-void',10,15),
+('beautiful-suffering',25,15),
+('melancholic-beauty',40,15),
+('psychological-abyss',10,35),
+('surreal-mind',25,35),
+('intellectual-maze',40,35),
+('dark-curiosity',10,65),
+('beautiful-chaos',25,65),
+('rebellion',40,65),
+('twisted-humor',10,85),
+('dangerous-desire',25,85),
+('adrenaline-rush',40,85),
+('hope-renewal',60,15),
+('human-connection',75,15),
+('romantic-longing',90,15),
+('spiritual-wonder',60,35),
+('quiet-wisdom',75,35),
+('bittersweet-nostalgia',90,35),
+('quiet-comfort',60,65),
+('playful-joy',75,65),
+('feel-good-escape',90,65),
+('dreamy-romance',60,85),
+('sunny-optimism',75,85),
+('pure-fun',90,85)
+ON CONFLICT(id) DO NOTHING;
+ALTER TABLE public.go_vibes ENABLE ROW LEVEL SECURITY;
+GRANT SELECT ON public.go_vibes TO anon,authenticated;
+GRANT ALL ON public.go_vibes TO service_role;
+CREATE POLICY go_vibes_read ON public.go_vibes FOR SELECT TO anon,authenticated USING (true);
+ALTER TABLE public.go_works ADD CONSTRAINT go_primary_vibe_fk FOREIGN KEY (primary_vibe) REFERENCES public.go_vibes(id);
+
+-- Dedicated 24-dimensional vibe vector, alongside the display position (X,Y).
+CREATE TABLE public.go_work_vibe_scores (
+ work_id uuid NOT NULL REFERENCES public.go_works(id) ON DELETE CASCADE,
+ vibe_id text NOT NULL REFERENCES public.go_vibes(id),
+ score smallint NOT NULL CHECK (score BETWEEN 0 AND 100),
+ scoring_method text NOT NULL DEFAULT 'editorial' CHECK (scoring_method IN ('editorial','spectrum-seed')),
+ updated_at timestamptz NOT NULL DEFAULT now(),
+ PRIMARY KEY(work_id,vibe_id)
+);
+CREATE INDEX go_scores_find_by_vibe ON public.go_work_vibe_scores(vibe_id,score DESC);
+ALTER TABLE public.go_work_vibe_scores ENABLE ROW LEVEL SECURITY;
+GRANT SELECT ON public.go_work_vibe_scores TO anon,authenticated;
+GRANT INSERT,UPDATE,DELETE ON public.go_work_vibe_scores TO authenticated;
+GRANT ALL ON public.go_work_vibe_scores TO service_role;
+CREATE POLICY go_scores_read ON public.go_work_vibe_scores FOR SELECT TO anon,authenticated
+ USING (EXISTS(SELECT 1 FROM public.go_works w WHERE w.id=work_id));
+CREATE POLICY go_scores_insert_admin ON public.go_work_vibe_scores FOR INSERT TO authenticated
+ WITH CHECK ((select public.has_role((select auth.uid()),'admin'::public.app_role)));
+CREATE POLICY go_scores_update_admin ON public.go_work_vibe_scores FOR UPDATE TO authenticated
+ USING ((select public.has_role((select auth.uid()),'admin'::public.app_role)))
+ WITH CHECK ((select public.has_role((select auth.uid()),'admin'::public.app_role)));
+CREATE POLICY go_scores_delete_admin ON public.go_work_vibe_scores FOR DELETE TO authenticated
+ USING ((select public.has_role((select auth.uid()),'admin'::public.app_role)));
