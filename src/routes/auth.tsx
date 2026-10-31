@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,13 +7,15 @@ import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { authReturnPath } from "@/lib/auth-return-path";
 
-type Search = { redirect?: string };
-const safePath = (p?: string) => (p && p.startsWith("/") && !p.startsWith("//") ? p : "/profile");
+type Search = { next?: string };
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>): Search =>
-    typeof s['redirect'] === "string" ? { redirect: s['redirect'] } : {},
+  validateSearch: (s: Record<string, unknown>): Search => {
+    const value = s["next"] ?? s["redirect"];
+    return typeof value === "string" ? { next: authReturnPath(value) } : {};
+  },
   head: () => ({
     meta: [
       { title: "Sign in — GO" },
@@ -29,8 +31,8 @@ type Mode = "signin" | "signup" | "forgot";
 
 function AuthPage() {
   const { t } = useI18n();
-  const { redirect } = Route.useSearch();
-  const navigate = useNavigate();
+  const { next } = Route.useSearch();
+  const returnPath = next ?? "/profile";
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,11 +40,31 @@ function AuthPage() {
   const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
-    const go = () => navigate({ to: safePath(redirect) as "/profile", replace: true });
-    supabase.auth.getUser().then(({ data }) => data.user && go());
-    const { data } = supabase.auth.onAuthStateChange((e, s) => e === "SIGNED_IN" && s && go());
-    return () => data.subscription.unsubscribe();
-  }, [navigate, redirect]);
+    let active = true;
+    let navigating = false;
+    const go = () => {
+      if (!active || navigating) return;
+      navigating = true;
+      window.location.replace(returnPath);
+    };
+
+    // OAuth may return an error in the callback URL rather than throwing from the button.
+    const callback = new URLSearchParams(window.location.search);
+    if (callback.has("error")) {
+      setNotice(t({ fa: "ورود با گوگل لغو شد یا انجام نشد. دوباره تلاش کن.", en: "Google sign-in was cancelled or failed. Please try again." }));
+    }
+
+    void supabase.auth.getUser().then(({ data, error }) => {
+      if (active && !error && data.user) go();
+    }).catch(() => { /* Leave the login form available if session retrieval fails. */ });
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) go();
+    });
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
+  }, [returnPath, t]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -53,7 +75,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       } else if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } });
+        const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: new URL(`/auth?next=${encodeURIComponent(returnPath)}`, window.location.origin).href } });
         if (error) throw error;
         setNotice(t({ fa: "ایمیل تأیید فرستاده شد. برای فعال‌سازی حساب، لینک را باز کن.", en: "Confirmation email sent. Open the link to activate your account." }));
       } else {
@@ -69,8 +91,21 @@ function AuthPage() {
   }
 
   async function google() {
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/auth" });
-    if (result.error) toast.error(t({ fa: "ورود با گوگل انجام نشد", en: "Google sign-in failed" }));
+    if (busy) return;
+    setBusy(true);
+    setNotice(null);
+    try {
+      const callback = new URL("/auth", window.location.origin);
+      callback.searchParams.set("next", returnPath);
+      // Lovable Cloud brokers OAuth tokens into the Supabase session; keep that
+      // integration instead of mixing a second independent OAuth flow.
+      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: callback.href });
+      if (result.error) throw result.error;
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t({ fa: "ورود با گوگل انجام نشد", en: "Google sign-in failed" }));
+    } finally {
+      setBusy(false);
+    }
   }
 
   const title = { signin: { fa: "ورود به GO", en: "Sign in to GO" }, signup: { fa: "ساخت حساب", en: "Create account" }, forgot: { fa: "بازیابی رمز", en: "Reset password" } }[mode];
@@ -80,7 +115,7 @@ function AuthPage() {
       <h1 className="text-3xl font-bold">{t(title)}</h1>
       {mode !== "forgot" && (
         <>
-          <Button type="button" variant="secondary" className="mt-8 w-full rounded-full" onClick={google}>
+          <Button type="button" variant="secondary" className="mt-8 w-full rounded-full" onClick={google} disabled={busy}>
             {t({ fa: "ادامه با گوگل", en: "Continue with Google" })}
           </Button>
           <div className="my-6 text-center text-xs text-muted-foreground">{t({ fa: "یا با ایمیل", en: "or with email" })}</div>
