@@ -14,9 +14,34 @@ export type Database = {
   }
   public: {
     Tables: {
+      go_works: {
+        Row: { id: string; module: string; canonical_title: string; creator: string; release_year: number | null; original_language: string | null; scope: string; language: string | null; primary_vibe: string; secondary_vibes: string[]; spectrum_x: number; spectrum_y: number; cover_url: string | null; provider: string | null; provider_id: string | null; curator_notes: string | null; status: string; created_at: string; updated_at: string }
+        Insert: { id?: string; module: string; canonical_title: string; creator?: string; release_year?: number | null; original_language?: string | null; scope: string; language?: string | null; primary_vibe: string; secondary_vibes?: string[]; spectrum_x: number; spectrum_y: number; cover_url?: string | null; provider?: string | null; provider_id?: string | null; curator_notes?: string | null; status?: string }
+        Update: { id?: string; module?: string; canonical_title?: string; creator?: string; release_year?: number | null; original_language?: string | null; scope?: string; language?: string | null; primary_vibe?: string; secondary_vibes?: string[]; spectrum_x?: number; spectrum_y?: number; cover_url?: string | null; provider?: string | null; provider_id?: string | null; curator_notes?: string | null; status?: string }
+        Relationships: []
+      }
+      go_work_editions: {
+        Row: { id: string; work_id: string; language: string; display_title: string; publisher_or_translator: string | null; source_url: string | null; cover_url: string | null }
+        Insert: { id?: string; work_id: string; language: string; display_title: string; publisher_or_translator?: string | null; source_url?: string | null; cover_url?: string | null }
+        Update: { id?: string; work_id?: string; language?: string; display_title?: string; publisher_or_translator?: string | null; source_url?: string | null; cover_url?: string | null }
+        Relationships: [{ foreignKeyName: "go_work_editions_work_id_fkey"; columns: ["work_id"]; isOneToOne: false; referencedRelation: "go_works"; referencedColumns: ["id"] }]
+      }
+      go_catalog_submissions: {
+        Row: { id: string; user_id: string; module: string; title: string; creator: string; provider: string; provider_id: string | null; source_url: string | null; cover_url: string | null; language: string | null; status: string; reviewed_by: string | null; reviewed_at: string | null; reviewed_work_id: string | null; created_at: string }
+        Insert: { id?: string; user_id: string; module: string; title: string; creator?: string; provider: string; provider_id?: string | null; source_url?: string | null; cover_url?: string | null; language?: string | null; status?: string }
+        Update: { status?: string; reviewed_by?: string | null; reviewed_at?: string | null; reviewed_work_id?: string | null }
+        Relationships: []
+      }
+      go_user_interests: {
+        Row: { id: string; user_id: string; module: string; work_id: string | null; submission_id: string | null; title: string; created_at: string }
+        Insert: { id?: string; user_id: string; module: string; work_id?: string | null; submission_id?: string | null; title: string }
+        Update: { id?: string; user_id?: string; module?: string; work_id?: string | null; submission_id?: string | null; title?: string }
+        Relationships: []
+      }
       go_preferences: {
         Row: {
           age: number | null
+          birth_year: number | null
           ai_consent: boolean
           consent_at: string
           consent_version: string
@@ -31,6 +56,7 @@ export type Database = {
         }
         Insert: {
           age?: number | null
+          birth_year?: number | null
           ai_consent?: boolean
           consent_at?: string
           consent_version?: string
@@ -45,6 +71,7 @@ export type Database = {
         }
         Update: {
           age?: number | null
+          birth_year?: number | null
           ai_consent?: boolean
           consent_at?: string
           consent_version?: string
@@ -87,6 +114,9 @@ export type Database = {
           display_name: string | null
           id: string
           preferred_language: string
+          spoken_language: string
+          country: string | null
+          birth_year: number | null
           updated_at: string
         }
         Insert: {
@@ -95,6 +125,9 @@ export type Database = {
           display_name?: string | null
           id: string
           preferred_language?: string
+          spoken_language?: string
+          country?: string | null
+          birth_year?: number | null
           updated_at?: string
         }
         Update: {
@@ -103,6 +136,9 @@ export type Database = {
           display_name?: string | null
           id?: string
           preferred_language?: string
+          spoken_language?: string
+          country?: string | null
+          birth_year?: number | null
           updated_at?: string
         }
         Relationships: []
