@@ -1,5 +1,6 @@
 import {describe,expect,it} from 'vitest';
-import {catalogQuota,displayTitle,visibleWorks,PAGE_SIZE} from '@/lib/catalog';
+import {catalogQuota,displayTitle,visibleWorks,unbiasedDiscoveryOrder,PAGE_SIZE} from '@/lib/catalog';
+import {VIBES} from '@/lib/vibes';
 import type {Database} from '@/integrations/supabase/types';
 
 type Work=Database['public']['Tables']['go_works']['Row'];
@@ -32,7 +33,18 @@ describe('starter catalog rules',()=>{
   expect(visibleWorks(all,'read','en').map(w=>w.id)).toEqual([make().id]);
   expect(visibleWorks(all,'read','fa')).toHaveLength(2);
  });
- it('matches both primary and secondary vibes',()=>{
-  expect(visibleWorks([make()],'read','fa','quiet-wisdom')).toHaveLength(1);
+ it('does not reveal a taxonomy filter in the public work selector',()=>{
+  expect(visibleWorks([make()],'read','fa')).toHaveLength(1);
+ });
+ it('shows four different hidden quadrants among the first four cards, with stable unbiased order',()=>{
+  const items=VIBES.flatMap((v,i)=>Array.from({length:6},(_,j)=>make({
+    id:`work-${i}-${j}`,canonical_title:`Title ${i} - ${j}`,
+    primary_vibe:v.id
+  })));
+  const ordered=unbiasedDiscoveryOrder(items,'seed-for-same-user');
+  expect(ordered).toHaveLength(144);
+  expect(new Set(ordered.map(w=>w.id)).size).toBe(144);
+  expect(new Set(ordered.slice(0,4).map(w=>VIBES.find(v=>v.id===w.primary_vibe)?.quadrant)).size).toBe(4);
+  expect(unbiasedDiscoveryOrder(items,'seed-for-same-user').map(w=>w.id)).toEqual(ordered.map(w=>w.id));
  });
 });
