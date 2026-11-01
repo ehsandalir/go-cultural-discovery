@@ -24,6 +24,10 @@ The app asks **«کدوم ترکیب رنگ بیشتر به حال‌وهوات 
 5. Home displays the saved signed image URL when available; no AI generation on page reload. Regeneration is deliberate and rate-limited to two requests/day.
 6. Position navigation hotspots separately as accessible responsive DOM elements over the stable artwork; don't rely on untrusted generated-image text or hotspot locations.
 
+## Verification status
+
+The 2026-11-01 follow-up passes TypeScript, all eight tests, the Node production build and HTTP smoke checks, and the default Cloudflare build. See [GO_LIVE_STATUS.md](GO_LIVE_STATUS.md) for evidence and remaining limits. Personalized image generation, storage isolation and browser visual QA have not been completed; this feature remains separate from the published baseline.
+
 ## Deployment checklist
 
 - Apply `drizzle/migrations/0002_go_personal_rooms.sql` to the correct Supabase database (only after review).
