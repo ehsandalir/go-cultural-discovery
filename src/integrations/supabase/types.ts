@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      go_personal_rooms: {
+        Row: {
+          user_id: string
+          palette_id: string
+          vibe_ids: Json
+          image_path: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          palette_id: string
+          vibe_ids?: Json
+          image_path?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          user_id?: string
+          palette_id?: string
+          vibe_ids?: Json
+          image_path?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       go_preferences: {
         Row: {
           age: number | null
