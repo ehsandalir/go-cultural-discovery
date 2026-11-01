@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, Paintbrush, Sparkles } from "lucide-react";
+import { BookOpen, Check, Clapperboard, Compass, Headphones, Laptop2, Paintbrush, Sparkles, type LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/hooks/use-session";
@@ -10,16 +10,23 @@ import { VIBES } from "@/lib/vibes";
 import { ROOM_PALETTES, type RoomPaletteId } from "@/lib/personal-room";
 import { generatePersonalRoom, getPersonalRoom } from "@/lib/personal-room.functions";
 
-type Hotspot = { id: string; href?: string; x: number; y: number; name: { fa: string; en: string } };
+type Hotspot = {
+  id: string;
+  route?: "/" | "/discover";
+  module?: "watch" | "read" | "listen";
+  x: number;
+  y: number;
+  icon: LucideIcon;
+  name: { fa: string; en: string };
+};
+
+/** Percentages target the fixed 9:16 reference A geometry, not the document viewport. */
 const HOTSPOTS: Hotspot[] = [
-  { id: "desk", href: "/", x: 35, y: 72, name: { fa: "میز من", en: "My desk" } },
-  { id: "listen", href: "/explore/listen", x: 13, y: 31, name: { fa: "شنیدن", en: "Listen" } },
-  { id: "read", href: "/explore/read", x: 84, y: 33, name: { fa: "خواندن", en: "Read" } },
-  { id: "watch", href: "/explore/watch", x: 82, y: 80, name: { fa: "تماشا", en: "Watch" } },
-  { id: "style", x: 81, y: 63, name: { fa: "استایل · به‌زودی", en: "Style · soon" } },
-  { id: "dna", x: 69, y: 50, name: { fa: "آینهٔ DNA · به‌زودی", en: "DNA mirror · soon" } },
-  { id: "discover", href: "/discover", x: 29, y: 33, name: { fa: "کشف", en: "Discover" } },
-  { id: "journey", x: 67, y: 27, name: { fa: "سفر من · به‌زودی", en: "My journey · soon" } },
+  { id: "watch", module: "watch", x: 19, y: 55, icon: Clapperboard, name: { fa: "تماشا", en: "Watch" } },
+  { id: "read", module: "read", x: 28, y: 36, icon: BookOpen, name: { fa: "خواندن", en: "Read" } },
+  { id: "listen", module: "listen", x: 85, y: 49, icon: Headphones, name: { fa: "شنیدن", en: "Listen" } },
+  { id: "desk", route: "/", x: 57, y: 64, icon: Laptop2, name: { fa: "میز من", en: "My desk" } },
+  { id: "discover", route: "/discover", x: 51, y: 40, icon: Compass, name: { fa: "کشف", en: "Discover" } },
 ];
 
 export function PersonalRoomHero() {
@@ -73,22 +80,57 @@ export function PersonalRoomHero() {
           <p className="mb-1 text-xs tracking-[0.18em] text-primary" dir="ltr">GO / YOUR ROOM</p>
           <h1 className="text-3xl font-bold md:text-5xl">{t({ fa: "این اتاق، شبیه تو ساخته می‌شه.", en: "A room made to feel like you." })}</h1>
           <p className="mt-2 text-sm text-muted-foreground">{t({
-            fa: "نقشهٔ اتاق برای همه یکیه؛ قصه، رنگ و چیزهای کوچیکش فقط مال توئه.",
-            en: "The room layout is shared. Its story, colors and small details are yours alone.",
+            fa: "چیدمان اصلی برای همه ثابته؛ نور، رنگ و جزئیات فرهنگی اتاق تو بر اساس سلیقه‌ات متفاوت ساخته می‌شه.",
+            en: "A shared portrait room blueprint. Your light, colors and cultural details are one of a kind.",
           })}</p>
         </div>
-        <span className="rounded-full border px-3 py-1 text-xs text-muted-foreground">{room.data?.imageUrl ? t({ fa: "اتاق شخصی من", en: "My personal room" }) : t({ fa: "اسکچ اولیه", en: "Base sketch" })}</span>
+        <span className="rounded-full border px-3 py-1 text-xs text-muted-foreground">{room.data?.imageUrl ? t({ fa: "اتاق شخصی من", en: "My personal room" }) : t({ fa: "پیش‌نمایش اتاق", en: "Room style preview" })}</span>
       </div>
 
-      <div className="relative isolate aspect-video overflow-hidden rounded-2xl border bg-[#e9ece9]" dir="ltr">
-        <img src={room.data?.imageUrl || "/room-layout.svg"} alt={t({ fa: "نمای دوبعدی اتاق GO با پنجرهٔ رو به شهر و بخش‌های فرهنگی", en: "2D GO room, city window and cultural corners" })} className="absolute inset-0 h-full w-full object-contain" />
-        {HOTSPOTS.map(h => h.href ? (
-          <a key={h.id} href={h.href} className="group absolute z-10 flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-700/45 bg-white/70 px-2 text-[10px] font-semibold text-slate-800 shadow-sm backdrop-blur-sm transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 sm:text-xs"
-            style={{ left: `${h.x}%`, top: `${h.y}%` }} aria-label={t(h.name)} title={t(h.name)}>{t(h.name)}</a>
-        ) : (
-          <span key={h.id} className="absolute z-10 hidden -translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-500/30 bg-white/60 px-1.5 py-1 text-[9px] text-slate-600 sm:block"
-            style={{ left: `${h.x}%`, top: `${h.y}%` }} title={t(h.name)}>{t(h.name)}</span>
-        ))}
+      {/* The room is portrait-first, with an independent responsive hotspot layer.
+          The reference contains mock UI; generated rooms are requested without any embedded UI. */}
+      <div className="mx-auto w-full max-w-[480px]" dir="ltr">
+        <div className="relative isolate aspect-[9/16] w-full overflow-hidden rounded-[2rem] border border-border/60 bg-[#c2a898] shadow-[0_24px_65px_-35px_rgba(18,43,42,0.55)]">
+          <img
+            src={room.data?.imageUrl || "/room-reference-a.webp"}
+            alt={t({
+              fa: "اتاق شخصی عمودی GO: تخت و پوسترها در چپ، پنجره و میز روبه‌شهر، کتاب‌ها و موسیقی در راست",
+              en: "Portrait GO room: bed and posters on the left, city window and desk ahead, books and records on the right",
+            })}
+            className="absolute inset-0 h-full w-full object-cover object-center"
+            loading="eager"
+          />
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[13%] bg-gradient-to-b from-slate-950/35 to-transparent" />
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[20%] bg-gradient-to-t from-slate-950/65 to-transparent" />
+          {HOTSPOTS.map(h => {
+            const Icon = h.icon;
+            const content = (
+              <span className="group relative flex size-11 items-center justify-center rounded-full border border-white/80 bg-slate-900/35 text-white shadow-lg ring-1 ring-black/10 backdrop-blur-[5px] transition-all hover:scale-110 hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-white">
+                <Icon className="size-5" aria-hidden />
+                <span className="pointer-events-none absolute start-1/2 top-full z-20 mt-1 w-max max-w-28 -translate-x-1/2 rounded-full bg-slate-950/75 px-2 py-1 text-[10px] font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                  {t(h.name)}
+                </span>
+              </span>
+            );
+            const position = { left: `${h.x}%`, top: `${h.y}%` };
+            const className = "absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2";
+            return h.module ? (
+              <Link key={h.id} to="/explore/$module" params={{ module: h.module }} className={className} style={position} aria-label={t(h.name)} title={t(h.name)}>{content}</Link>
+            ) : h.route === "/discover" ? (
+              <Link key={h.id} to="/discover" className={className} style={position} aria-label={t(h.name)} title={t(h.name)}>{content}</Link>
+            ) : (
+              <Link key={h.id} to="/" className={className} style={position} aria-label={t(h.name)} title={t(h.name)}>{content}</Link>
+            );
+          })}
+          <div className="pointer-events-none absolute inset-x-5 bottom-6 z-10 text-start text-white drop-shadow-sm">
+            <div className="text-xs uppercase tracking-[0.18em]" dir="ltr">GO / YOUR SPACE</div>
+            <div className="mt-1 text-sm font-medium">
+              {room.data?.imageUrl
+                ? t({ fa: "این اتاق، قصهٔ تو رو داره.", en: "This space tells your story." })
+                : t({ fa: "پیش‌نمایش سبک اتاق؛ اتاق تو منحصر‌به‌فرد ساخته می‌شه.", en: "Room style preview. Your own room will be unique." })}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
@@ -152,7 +194,7 @@ export function PersonalRoomHero() {
           <Button asChild className="mt-5 rounded-full"><Link to="/auth" search={{ next: "/" }}>{t({ fa: "برای ساخت اتاقت وارد شو", en: "Sign in to create your room" })}</Link></Button>
         )}
         {errorMessage && <p className="mt-4 text-sm text-destructive" role="alert">{errorMessage}</p>}
-        {room.isError && <p className="mt-4 text-sm text-muted-foreground">{t({ fa: "داده‌های اتاق در دسترس نیست؛ اسکچ اولیه نمایش داده می‌شه.", en: "Your room data is unavailable, so the base sketch is shown." })}</p>}
+        {room.isError && <p className="mt-4 text-sm text-muted-foreground">{t({ fa: "داده‌های اتاق در دسترس نیست؛ نمونهٔ طراحی نمایش داده می‌شه.", en: "Your room data is unavailable, so the style preview is shown." })}</p>}
       </div>
     </section>
   );
