@@ -12,7 +12,7 @@ import { generatePersonalRoom, getPersonalRoom } from "@/lib/personal-room.funct
 
 type Hotspot = {
   id: string;
-  route?: "/" | "/discover";
+  route?: "/discover";
   module?: "watch" | "read" | "listen";
   x: number;
   y: number;
@@ -25,7 +25,7 @@ const HOTSPOTS: Hotspot[] = [
   { id: "watch", module: "watch", x: 19, y: 55, icon: Clapperboard, name: { fa: "تماشا", en: "Watch" } },
   { id: "read", module: "read", x: 28, y: 36, icon: BookOpen, name: { fa: "خواندن", en: "Read" } },
   { id: "listen", module: "listen", x: 85, y: 49, icon: Headphones, name: { fa: "شنیدن", en: "Listen" } },
-  { id: "desk", route: "/", x: 57, y: 64, icon: Laptop2, name: { fa: "میز من", en: "My desk" } },
+  { id: "desk", x: 57, y: 64, icon: Laptop2, name: { fa: "شخصی‌سازی اتاق", en: "Personalize room" } },
   { id: "discover", route: "/discover", x: 51, y: 40, icon: Compass, name: { fa: "کشف", en: "Discover" } },
 ];
 
@@ -119,7 +119,7 @@ export function PersonalRoomHero() {
             ) : h.route === "/discover" ? (
               <Link key={h.id} to="/discover" className={className} style={position} aria-label={t(h.name)} title={t(h.name)}>{content}</Link>
             ) : (
-              <Link key={h.id} to="/" className={className} style={position} aria-label={t(h.name)} title={t(h.name)}>{content}</Link>
+              <button key={h.id} type="button" onClick={() => document.getElementById("room-preferences")?.scrollIntoView({ behavior: "auto", block: "start" })} className={className} style={position} aria-label={t(h.name)} title={t(h.name)}>{content}</button>
             );
           })}
           <div className="pointer-events-none absolute inset-x-5 bottom-6 z-10 text-start text-white drop-shadow-sm">
@@ -141,7 +141,7 @@ export function PersonalRoomHero() {
         <Link to="/discover" className="underline underline-offset-4">{t({ fa: "کشف", en: "Discover" })}</Link>
       </div>
 
-      <div className="mt-8 rounded-2xl border bg-card p-5 md:p-7">
+      <div id="room-preferences" className="mt-8 scroll-mt-6 rounded-2xl border bg-card p-5 md:p-7">
         <div className="flex items-center gap-2">
           <Paintbrush className="size-5 text-primary" />
           <h2 className="text-xl font-semibold">{t({ fa: "کدوم ترکیب رنگ بیشتر به حال‌وهوات نزدیکه؟", en: "Which color mix feels most like you?" })}</h2>
