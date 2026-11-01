@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import sketchDataUri from "@/assets/room-layout.png?inline";
+import compositionReference from "@/assets/room-reference-a.webp?inline";
+import styleReference from "@/assets/room-reference-b.webp?inline";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { aiFavorites, favoritesSchema } from "./taste";
 import { ROOM_PALETTES, personalRoomPrompt, roomVibe } from "./personal-room";
@@ -60,8 +61,11 @@ export const generatePersonalRoom = createServerFn({ method: "POST" })
       culturalTitles: favorites as Record<string, string[]>,
       variationToken,
     });
-    const encoded = sketchDataUri.split(",")[1];
-    if (!encoded) throw new Error("The room sketch reference is missing.");
+    // Both portraits are lightweight in-repo reference images, NOT generated room results.
+    // Inline assets are parsed at build-time; no public URL or user data is fetched by the generator.
+    const compositionImage = compositionReference.split(",")[1];
+    const styleImage = styleReference.split(",")[1];
+    if (!compositionImage || !styleImage) throw new Error("The portrait room references are missing.");
     const model = process.env["GO_ROOM_IMAGE_MODEL"] || "gemini-2.5-flash-image";
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
@@ -70,9 +74,10 @@ export const generatePersonalRoom = createServerFn({ method: "POST" })
       body: JSON.stringify({
         contents: [{ role: "user", parts: [
           { text: prompt },
-          { inlineData: { mimeType: "image/png", data: encoded } },
+          { inlineData: { mimeType: "image/webp", data: compositionImage } },
+          { inlineData: { mimeType: "image/webp", data: styleImage } },
         ] }],
-        generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: "16:9" } },
+        generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: "9:16" } },
       }),
       signal: AbortSignal.timeout(90000),
     });
