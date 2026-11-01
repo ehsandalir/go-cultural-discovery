@@ -1,7 +1,9 @@
 /** Accept only same-origin in-app paths as post-authentication destinations. */
 export function authReturnPath(value: unknown, fallback = "/profile"): string {
-  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//")) return fallback;
+  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//"))
+    return fallback;
   // Backslashes can be interpreted as slashes in URLs; controls can corrupt redirects.
+  // eslint-disable-next-line no-control-regex
   if (/[\\\u0000-\u001f\u007f]/.test(value)) return fallback;
   try {
     const origin = "https://go.invalid";

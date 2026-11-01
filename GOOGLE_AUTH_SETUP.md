@@ -3,11 +3,13 @@
 > This repository is a standalone source snapshot of a Lovable Cloud project. Changes to GitHub do not automatically update the Lovable preview unless Git sync is explicitly connected. Never put Google OAuth secrets or service-role keys in this repository.
 
 ## Current product
+
 - Lovable project: https://lovable.dev/projects/e3f74c39-baf4-4075-9ccf-b860f5fc3987
 - Preview: https://id-preview--e3f74c39-baf4-4075-9ccf-b860f5fc3987.lovable.app
 - Google login is started with `lovable.auth.signInWithOAuth("google", { redirect_uri })`, which exchanges the Lovable Cloud tokens into the Supabase session. Do not replace this with a separate Supabase provider call without migrating the authentication backend.
 
 ## Provider configuration (required, not stored in source code)
+
 1. In the Lovable editor, open **Cloud → Users → Auth settings → Google**.
 2. Enable Google and choose **Managed by Lovable**, unless a fully configured custom Google OAuth app is required. In managed mode, Lovable handles credentials; a Google API key is **not** an OAuth Client ID or Client Secret.
 3. In **Cloud → Users → Auth settings → Advanced**, confirm the preview/actual deployment URL is allowed as a redirect URL. Add published/custom domains only when actually used.
@@ -15,6 +17,7 @@
 5. Save settings. Do **not** paste OAuth secrets into git, tickets, chat logs, or client-side `VITE_` variables.
 
 ## Verification
+
 - Open the actual preview or published app in a browser and go to `/auth`.
 - Press **Continue with Google** and choose an account. Expect the Google consent UI, a return to `/auth?next=...`, then a Supabase-authenticated redirect to the intended protected route, default `/profile`.
 - Try an invalid/cancelled OAuth request; expect an actionable error and no blank page.

@@ -49,7 +49,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link to="/" className="font-display text-2xl font-bold tracking-tight">
             <span className="text-gradient">GO</span>
           </Link>
-          <nav className="hidden items-center gap-1 md:flex" aria-label={t({ fa: "ناوبری اصلی", en: "Main navigation" })}>
+          <nav
+            className="hidden items-center gap-1 md:flex"
+            aria-label={t({ fa: "ناوبری اصلی", en: "Main navigation" })}
+          >
             {NAV.map((n) => (
               <Link
                 key={n.to}

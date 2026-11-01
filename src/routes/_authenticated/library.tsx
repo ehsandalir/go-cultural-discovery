@@ -25,14 +25,24 @@ function LibraryPage() {
   ];
   return (
     <>
-      <PageHeader title={t({ fa: "کتابخانهٔ من", en: "My Library" })} subtitle={t({ fa: "کتابخانه‌ات خالی است — ذخیرهٔ آثار با کاتالوگ واقعی در فاز ۲ فعال می‌شود.", en: "Your library is empty — saving works becomes available with the real catalog in Phase 2." })} />
+      <PageHeader
+        title={t({ fa: "کتابخانهٔ من", en: "My Library" })}
+        subtitle={t({
+          fa: "کتابخانه‌ات خالی است — ذخیرهٔ آثار با کاتالوگ واقعی در فاز ۲ فعال می‌شود.",
+          en: "Your library is empty — saving works becomes available with the real catalog in Phase 2.",
+        })}
+      />
       <div className="grid gap-4 pb-8 md:grid-cols-3">
         {shelves.map((s) => (
           <div key={s.name.en} className="rounded-2xl border border-dashed bg-card/50 p-6">
             <s.icon className="size-6 text-muted-foreground" />
             <div className="mt-4 font-semibold">{t(s.name)}</div>
-            <div className="mt-1 text-sm text-muted-foreground">{t({ fa: "۰ مورد", en: "0 items" })}</div>
-            <div className="mt-3"><PhaseBadge phase={2} /></div>
+            <div className="mt-1 text-sm text-muted-foreground">
+              {t({ fa: "۰ مورد", en: "0 items" })}
+            </div>
+            <div className="mt-3">
+              <PhaseBadge phase={2} />
+            </div>
           </div>
         ))}
       </div>

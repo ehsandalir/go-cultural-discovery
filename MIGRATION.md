@@ -8,11 +8,11 @@ Source snapshot: `e657cb55e435e340b72391686887ce2cc130ab0b`.
 
 All 115 source/configuration/assets files from this snapshot are included except `.env`: 112 text files and the three original binary assets. The original binary files were downloaded through the authenticated Lovable file viewer without re-encoding or replacing them.
 
-| Asset | Bytes | SHA-256 |
-| --- | ---: | --- |
-| `public/favicon.ico` | 20373 | `dd821076a9b03adc2173c93956226aea3d92482d7578fc4339c5d3a2e9c24586` |
+| Asset                    |  Bytes | SHA-256                                                            |
+| ------------------------ | -----: | ------------------------------------------------------------------ |
+| `public/favicon.ico`     |  20373 | `dd821076a9b03adc2173c93956226aea3d92482d7578fc4339c5d3a2e9c24586` |
 | `src/assets/go-room.jpg` | 243818 | `204b317eb759176aae6c25ff88d559b7ba92fe468eae98b357d8d2b75da405a9` |
-| `src/assets/hero.jpg` | 126390 | `6f10c38002ac786aa91b594e44d3867fff557d049ceccf0d8da72d77bd1baace` |
+| `src/assets/hero.jpg`    | 126390 | `6f10c38002ac786aa91b594e44d3867fff557d049ceccf0d8da72d77bd1baace` |
 
 `.env.example` lists configuration variable names only. `.gitignore` excludes `.env` and local environment variants. No credentials or database records were exported.
 

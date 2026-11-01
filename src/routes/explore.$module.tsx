@@ -37,7 +37,10 @@ function ModulePage() {
         <DemoBadge />
         <PhaseBadge phase={2} />
         <span className="text-sm text-muted-foreground">
-          {t({ fa: "کاتالوگ واقعی و صفحهٔ اثر در فاز ۲.", en: "Real catalog and work pages arrive in Phase 2." })}
+          {t({
+            fa: "کاتالوگ واقعی و صفحهٔ اثر در فاز ۲.",
+            en: "Real catalog and work pages arrive in Phase 2.",
+          })}
         </span>
       </div>
       <ul className="grid gap-4 pb-12 sm:grid-cols-2 lg:grid-cols-3">
@@ -47,7 +50,9 @@ function ModulePage() {
             <div className="mt-4 font-semibold">{t(w.title)}</div>
             <div className="mt-2 flex flex-wrap gap-1">
               <VibeTag id={w.primaryVibe} primary />
-              {w.secondaryVibes.map((s) => <VibeTag key={s} id={s} />)}
+              {w.secondaryVibes.map((s) => (
+                <VibeTag key={s} id={s} />
+              ))}
             </div>
           </li>
         ))}

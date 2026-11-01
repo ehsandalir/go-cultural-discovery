@@ -25,20 +25,39 @@ function Studio() {
   if (!q.data?.allowed)
     return (
       <div className="py-20 text-center">
-        <h1 className="text-2xl font-semibold">{t({ fa: "دسترسی ندارید", en: "Access denied" })}</h1>
-        <p className="mt-2 text-muted-foreground">{t({ fa: "این بخش فقط برای مدیران است.", en: "This area is for admins only." })}</p>
-        <Link to="/" className="mt-6 inline-block text-primary underline">{t({ fa: "بازگشت به خانه", en: "Back home" })}</Link>
+        <h1 className="text-2xl font-semibold">
+          {t({ fa: "دسترسی ندارید", en: "Access denied" })}
+        </h1>
+        <p className="mt-2 text-muted-foreground">
+          {t({ fa: "این بخش فقط برای مدیران است.", en: "This area is for admins only." })}
+        </p>
+        <Link to="/" className="mt-6 inline-block text-primary underline">
+          {t({ fa: "بازگشت به خانه", en: "Back home" })}
+        </Link>
       </div>
     );
   return (
     <>
-      <PageHeader title="GO Studio" subtitle={t({ fa: "نمای پایه — ابزارهای مدیریت محتوا در فاز ۲.", en: "Foundation view — content management tools arrive in Phase 2." })} />
+      <PageHeader
+        title="GO Studio"
+        subtitle={t({
+          fa: "نمای پایه — ابزارهای مدیریت محتوا در فاز ۲.",
+          en: "Foundation view — content management tools arrive in Phase 2.",
+        })}
+      />
       <div className="grid gap-4 pb-16 md:grid-cols-3">
         <Stat label={t({ fa: "وایب‌های ثابت", en: "Fixed vibes" })} value={String(VIBES.length)} />
-        <Stat label={t({ fa: "تعریف طرح‌ها", en: "Plan definitions" })} value={String(q.data.plans.length)} />
+        <Stat
+          label={t({ fa: "تعریف طرح‌ها", en: "Plan definitions" })}
+          value={String(q.data.plans.length)}
+        />
         <div className="rounded-2xl border border-dashed bg-card/50 p-6">
-          <div className="font-semibold">{t({ fa: "مدیریت محتوا و وایب", en: "Content & vibe CRUD" })}</div>
-          <div className="mt-3"><PhaseBadge phase={2} /></div>
+          <div className="font-semibold">
+            {t({ fa: "مدیریت محتوا و وایب", en: "Content & vibe CRUD" })}
+          </div>
+          <div className="mt-3">
+            <PhaseBadge phase={2} />
+          </div>
         </div>
       </div>
     </>

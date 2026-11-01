@@ -32,7 +32,7 @@ The codebase uses TanStack Start + React 19 + TypeScript + Vite + Tailwind CSS +
 
 BUSINESS AND PRODUCT CONTRACT:
 GO is a bilingual (FA RTL / EN LTR), mobile-first, editorial cultural discovery app: GoWatch, GoRead, GoListen; later GoStyle, GO DNA and creator features. Canonical 24 vibes and quadrants are in src/lib/vibes.ts; do not overwrite them. Plans are GO Free (unlimited discovery), GO Inside (deep analysis) and GO Create (publish collections); pricing is not set. No fake recommendations, fake auth success, fabricated metadata or mock AI image presented as real.
-UPDATED APPROVED ROOM DIRECTION (2026-11-01): Home's personal room is a PORTRAIT 9:16 MOBILE-FIRST room viewed from its doorway, inspired by the user's two approved mockups. Style is MINIMAL, WARM and LIGHTLY REALISTIC (soft material finishes, modest cinematic depth), not cartoon, a hard 2D ink drawing, luxury interiors, hyper-real estate photo or a 3D game. The fixed geometry is: bed/posters LEFT, single large city window and desk STRAIGHT AHEAD, vinyl/books/guitar shelf RIGHT, rug/pouf lower foreground. The two actual compressed reference images live on PR #3 at public/room-reference-a.webp and public/room-reference-b.webp. Each consenting user receives a unique CLEAN GENERATED 9:16 image from those references plus canonical prompt, selected palette, vibes and explicitly saved favorites. No embedded mockup navigation/text/logos in generated room images. Interactive hotspots must be DOM overlays with 44px targets. Room palette must not change the app theme. These updated preferences supersede previous landscape and illustrative line-sketch art-direction descriptions.
+Home is a PERSONAL 2D ILLUSTRATED ROOM, NOT a photorealistic bedroom, 3D game or aesthetic interior photo. The room has fixed spatial anchors/hotspots (desk, city window, CD/vinyl shelf, video drawer, bookshelf, wardrobe, mirror, posters, wall photographs) for cultural module navigation. Every consenting user eventually receives a distinct illustration, generated from an ACTUAL fixed sketch reference image + immutable master prompt + their explicitly saved cultural favorites/vibes + one of EXACTLY 6 curated color palettes. Room palette must not change the app's overall theme.
 Six room palettes, three hex colors each:
 After Rain #DDECF1 #85B4C8 #415B76;
 Peach Dusk #F7E5DB #E7A992 #7D6D98;
@@ -45,7 +45,7 @@ EN: "Which color mix feels most like you?"
 Never show a traditional theme switcher in room onboarding.
 
 CURRENT WORK IN A SEPARATE UNMERGED BRANCH:
-Draft GitHub PR #3, feature/unique-illustrated-rooms. Contains the approved portrait reference thumbnails, 9:16 responsive UI and clean image-generation prompt, six-color selector, a private storage migration and room UI. It HAS NOT passed full typecheck/runtime/production tests and database changes have NOT been applied. Do not act as if PR #3 is on main. Once the main app preview works, inspect this PR and perform tests, review storage isolation, correct generated-image hotspot alignment, and propose its merge in a separate stage; do not merge blindly.
+Draft GitHub PR #3, feature/unique-illustrated-rooms. Contains the proposed 2D sketch, six-color selector, secure image-generation prompt, a private storage migration and room UI. It HAS NOT passed full typecheck/runtime/production tests and database changes have NOT been applied. Do not act as if PR #3 is on main. Once the main app preview works, inspect this PR and perform tests, review storage isolation, correct generated-image hotspot alignment, and propose its merge in a separate stage; do not merge blindly.
 
 SECURITY:
 - Never expose, print or commit API keys. Treat any user-supplied API key as confidential. Secrets in server runtime, NOT VITE_*.
@@ -60,12 +60,13 @@ FIRST TASK IN THIS IMPORT:
 (3) Make minimal changes for runnable preview, if needed, without redesign.
 (4) Show an honest audit: what works, what is blocked by credentials, and what to do next.
 (5) Keep changes in a separate GitHub branch/PR instead of replacing main.
-Keep draft PR #3 separate until its portrait updates are tested and the owner approves merging. The approved visual direction is already documented in PR #3.
+I will approve later work on personalized room generation after baseline works.
 ```
 
 ## Required secrets and safety
 
 The existing `.env.example` lists configuration VARIABLE NAMES only. Configure them in AI Studio's server-side Secrets panel and, where needed, safe browser env variables. **Never paste secrets into the prompt or into code.** The app may need:
+
 - Supabase browser URL and browser-safe publishable key.
 - Supabase server URL and server-safe publishable key.
 - Optional Supabase service role only for trusted server actions (keep private).
@@ -81,7 +82,7 @@ The existing `.env.example` lists configuration VARIABLE NAMES only. Configure t
 2. `npm install` (or equivalent), TypeScript, tests, and build verified where supported.
 3. FA/EN toggles, root Home/Discover/Library/Profile and protected route behavior verified.
 4. Google Auth and Supabase tested in AI Studio-compatible preview with permitted redirect URLs.
-5. Review/repair draft PR #3, test and merge after tests and approval.
+5. Review/repair draft PR #3, test and merge once ready.
 6. Images generated server-side from real user choices and an actual sketch; persist privately; no fake previews.
 7. Only then consider deployment after explicit approval.
 

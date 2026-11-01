@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="Fixed 2D GO room sketch with city window, desk, media shelf, books, wardrobe and mirror">
+ <rect width="960" height="540" fill="#e9ece9"/>
+ <g fill="none" stroke="#52646d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M20 28H940V496L668 420H288L20 496Z"/>
+  <path d="M20 28L112 100H848L940 28M112 100V420M848 100V420M20 496L112 420H848L940 496M288 420L240 540M668 420L724 540"/>
+  <rect x="342" y="112" width="278" height="215" rx="5" stroke-width="7" fill="#dce9e5"/>
+  <path d="M481 112V327M342 219H620"/>
+  <path d="M354 301v-35h18v-22h20v-12h20v45h19v-50h20v-25h20v80h18v-38h21v-20h17v67h19v-56h18v-14h20v76" stroke-width="2" stroke="#8498a0"/>
+  <path d="M329 346H631" stroke-width="7"/>
+  <path d="M105 404L277 386L319 428L145 457Z" fill="#d0dcd6"/>
+  <path d="M105 404L105 477L145 506L145 457M319 428v60l-174 18M174 394l10-51h72l17 47M139 440L275 424"/>
+  <path d="M132 364L267 346M132 377L268 362" stroke-width="2"/>
+  <path d="M207 334v-38l16-11 16 11v38M198 333h50"/>
+  <path d="M50 139H268V322H50Z" fill="#e0e4d9"/>
+  <path d="M50 179H268M50 226H268M50 273H268"/>
+  <path d="M70 163v-24M86 163v-22M111 166v-27M123 163v-20M146 165v-27M183 163v-24M196 163v-24M221 163v-23M243 163v-24" stroke-width="7"/>
+  <path d="M70 216v-24M90 216v-31M110 217v-24M133 217v-24M170 216v-32M190 216v-25M228 216v-23M240 218v-28" stroke-width="7"/>
+  <rect x="700" y="124" width="202" height="268" rx="4" fill="#d9e0d9"/>
+  <path d="M801 124v268M715 170H887M715 257H887M715 331H887"/>
+  <path d="M742 180v70m32-66v63m56-66v65m34-62v65" stroke-width="6"/>
+  <rect x="675" y="402" width="249" height="70" rx="6" fill="#d7dcda"/>
+  <path d="M685 423h225m-198 19h72m32 0h65"/>
+  <circle cx="799" cy="436" r="9"/>
+  <path d="M236 114h75v84h-75zM642 117h32v53h-32z" fill="#dfe2e0"/>
+  <path d="M247 167l15-27 15 12 16-18 12 32M649 158l9-17 8 18" stroke-width="2"/>
+  <rect x="288" y="345" width="96" height="55" rx="5" fill="#e0e4db"/>
+  <path d="M304 346v-40h68v40M293 377h85M317 405v35M358 405v35"/>
+  <path d="M382 317h58l18 35h-76" stroke-width="3"/>
+  <circle cx="502" cy="401" r="25" fill="#d6dadd"/><path d="M491 406h22m-10-18v35" stroke-width="2"/>
+  <path d="M647 187h36v151h-36z" fill="#d9e3e0"/><path d="M655 209h20M654 330h23"/>
+ </g>
+</svg>

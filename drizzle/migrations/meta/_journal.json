@@ -15,6 +15,13 @@
       "when": 1793346320270,
       "tag": "0001_go_private_onboarding_and_request_limits",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793400000000,
+      "tag": "0002_go_personal_rooms",
+      "breakpoints": true
     }
   ]
 }

@@ -1,4 +1,5 @@
 # GO online integrations
+
 - [ ] English LTR across existing screens
 - [ ] Private consent-based onboarding and owner-only storage
 - [ ] Secure catalog proxies and honest configuration states

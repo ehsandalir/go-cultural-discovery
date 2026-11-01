@@ -1,0 +1,5 @@
+{
+  "name": "GO — Cultural Discovery",
+  "description": "Bilingual cultural discovery super app connecting Persian and global cinema, literature, and music through 24 emotional vibes.",
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

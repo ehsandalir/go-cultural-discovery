@@ -31,14 +31,19 @@ function ProfilePage() {
     queryFn: async () => {
       const { data: u } = await supabase.auth.getUser();
       const user = u.user!;
-      const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
       return { user, profile };
     },
   });
   const access = useQuery({ queryKey: ["access"], queryFn: () => getMyAccess() });
   const plans = useQuery({
     queryKey: ["plans"],
-    queryFn: async () => (await supabase.from("subscription_plans").select("*").order("sort_order")).data ?? [],
+    queryFn: async () =>
+      (await supabase.from("subscription_plans").select("*").order("sort_order")).data ?? [],
   });
 
   const [name, setName] = useState("");
@@ -55,9 +60,12 @@ function ProfilePage() {
     e.preventDefault();
     if (!me.data) return;
     setSaving(true);
-    const { error } = await supabase
-      .from("profiles")
-      .upsert({ id: me.data.user.id, display_name: name.trim().slice(0, 60) || null, preferred_language: lang, updated_at: new Date().toISOString() });
+    const { error } = await supabase.from("profiles").upsert({
+      id: me.data.user.id,
+      display_name: name.trim().slice(0, 60) || null,
+      preferred_language: lang,
+      updated_at: new Date().toISOString(),
+    });
     setSaving(false);
     if (error) {
       toast.error(t({ fa: "ذخیره نشد", en: "Could not save" }));
@@ -79,24 +87,43 @@ function ProfilePage() {
         <form onSubmit={save} className="space-y-4 rounded-2xl border bg-card p-6">
           <h2 className="text-lg font-semibold">{t({ fa: "حساب", en: "Account" })}</h2>
           <div className="flex items-center gap-2 text-sm">
-            {verified ? <MailCheck className="size-4 text-primary" /> : <MailWarning className="size-4 text-warning" />}
-            {verified ? t({ fa: "ایمیل تأیید شده", en: "Email verified" }) : t({ fa: "ایمیل تأیید نشده", en: "Email not verified" })}
+            {verified ? (
+              <MailCheck className="size-4 text-primary" />
+            ) : (
+              <MailWarning className="size-4 text-warning" />
+            )}
+            {verified
+              ? t({ fa: "ایمیل تأیید شده", en: "Email verified" })
+              : t({ fa: "ایمیل تأیید نشده", en: "Email not verified" })}
           </div>
           <div className="space-y-2">
             <Label htmlFor="name">{t({ fa: "نام نمایشی", en: "Display name" })}</Label>
-            <Input id="name" value={name} maxLength={60} onChange={(e) => setName(e.target.value)} />
+            <Input
+              id="name"
+              value={name}
+              maxLength={60}
+              onChange={(e) => setName(e.target.value)}
+            />
           </div>
           <div className="space-y-2">
             <Label>{t({ fa: "زبان ترجیحی", en: "Preferred language" })}</Label>
             <div className="flex gap-2">
               {(["fa", "en"] as const).map((l) => (
-                <Button key={l} type="button" variant={lang === l ? "default" : "secondary"} size="sm" onClick={() => setPrefLang(l)}>
+                <Button
+                  key={l}
+                  type="button"
+                  variant={lang === l ? "default" : "secondary"}
+                  size="sm"
+                  onClick={() => setPrefLang(l)}
+                >
                   {l === "fa" ? "فارسی" : "English"}
                 </Button>
               ))}
             </div>
           </div>
-          <Button type="submit" disabled={saving} className="rounded-full">{t({ fa: "ذخیره", en: "Save" })}</Button>
+          <Button type="submit" disabled={saving} className="rounded-full">
+            {t({ fa: "ذخیره", en: "Save" })}
+          </Button>
         </form>
 
         <div className="space-y-6">
@@ -106,17 +133,27 @@ function ProfilePage() {
               <PhaseBadge phase={4} />
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              {t({ fa: "طرح‌ها فعلاً فقط تعریف شده‌اند. پرداخت یا ارتقا وجود ندارد.", en: "Plans are definitions only for now. No payment or upgrade exists yet." })}
+              {t({
+                fa: "طرح‌ها فعلاً فقط تعریف شده‌اند. پرداخت یا ارتقا وجود ندارد.",
+                en: "Plans are definitions only for now. No payment or upgrade exists yet.",
+              })}
             </p>
             <ul className="mt-4 space-y-2">
               {plans.data?.map((p) => (
-                <li key={p.code} className="flex items-start justify-between gap-4 rounded-xl border bg-background p-3 text-sm">
+                <li
+                  key={p.code}
+                  className="flex items-start justify-between gap-4 rounded-xl border bg-background p-3 text-sm"
+                >
                   <div>
                     <div className="font-semibold">{t({ fa: p.name_fa, en: p.name_en })}</div>
-                    <div className="text-muted-foreground">{t({ fa: p.description_fa, en: p.description_en })}</div>
+                    <div className="text-muted-foreground">
+                      {t({ fa: p.description_fa, en: p.description_en })}
+                    </div>
                   </div>
                   {p.code === access.data?.plan && (
-                    <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-xs text-primary">{t({ fa: "فعلی", en: "Current" })}</span>
+                    <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-xs text-primary">
+                      {t({ fa: "فعلی", en: "Current" })}
+                    </span>
                   )}
                 </li>
               ))}
@@ -124,11 +161,16 @@ function ProfilePage() {
           </div>
 
           {access.data?.isAdmin && (
-            <Link to="/studio" className="flex items-center gap-3 rounded-2xl border border-primary/40 bg-card p-6 hover:shadow-glow">
+            <Link
+              to="/studio"
+              className="flex items-center gap-3 rounded-2xl border border-primary/40 bg-card p-6 hover:shadow-glow"
+            >
               <ShieldCheck className="size-6 text-primary" />
               <div>
                 <div className="font-semibold">GO Studio</div>
-                <div className="text-sm text-muted-foreground">{t({ fa: "پنل مدیریت", en: "Admin panel" })}</div>
+                <div className="text-sm text-muted-foreground">
+                  {t({ fa: "پنل مدیریت", en: "Admin panel" })}
+                </div>
               </div>
             </Link>
           )}

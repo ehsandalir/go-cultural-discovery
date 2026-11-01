@@ -8,10 +8,30 @@ import type { Bi } from "./i18n";
 export type QuadrantId = "dark-deep" | "dark-light" | "bright-deep" | "bright-light";
 
 export const QUADRANTS: { id: QuadrantId; name: Bi; colorClass: string; bgClass: string }[] = [
-  { id: "dark-deep", name: { fa: "تاریک و عمیق", en: "Dark & Deep" }, colorClass: "text-q-dark-deep", bgClass: "bg-q-dark-deep" },
-  { id: "dark-light", name: { fa: "تاریک و سبک", en: "Dark & Light" }, colorClass: "text-q-dark-light", bgClass: "bg-q-dark-light" },
-  { id: "bright-deep", name: { fa: "روشن و عمیق", en: "Bright & Deep" }, colorClass: "text-q-bright-deep", bgClass: "bg-q-bright-deep" },
-  { id: "bright-light", name: { fa: "روشن و سبک", en: "Bright & Light" }, colorClass: "text-q-bright-light", bgClass: "bg-q-bright-light" },
+  {
+    id: "dark-deep",
+    name: { fa: "تاریک و عمیق", en: "Dark & Deep" },
+    colorClass: "text-q-dark-deep",
+    bgClass: "bg-q-dark-deep",
+  },
+  {
+    id: "dark-light",
+    name: { fa: "تاریک و سبک", en: "Dark & Light" },
+    colorClass: "text-q-dark-light",
+    bgClass: "bg-q-dark-light",
+  },
+  {
+    id: "bright-deep",
+    name: { fa: "روشن و عمیق", en: "Bright & Deep" },
+    colorClass: "text-q-bright-deep",
+    bgClass: "bg-q-bright-deep",
+  },
+  {
+    id: "bright-light",
+    name: { fa: "روشن و سبک", en: "Bright & Light" },
+    colorClass: "text-q-bright-light",
+    bgClass: "bg-q-bright-light",
+  },
 ];
 
 export type Vibe = {

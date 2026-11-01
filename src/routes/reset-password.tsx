@@ -28,7 +28,9 @@ function ResetPage() {
 
   useEffect(() => {
     if (window.location.hash.includes("type=recovery")) setReady(true);
-    const { data } = supabase.auth.onAuthStateChange((e) => e === "PASSWORD_RECOVERY" && setReady(true));
+    const { data } = supabase.auth.onAuthStateChange(
+      (e) => e === "PASSWORD_RECOVERY" && setReady(true),
+    );
     return () => data.subscription.unsubscribe();
   }, []);
 
@@ -52,12 +54,28 @@ function ResetPage() {
         <form onSubmit={submit} className="mt-8 space-y-4">
           <div className="space-y-2">
             <Label htmlFor="pw">{t({ fa: "رمز عبور جدید", en: "New password" })}</Label>
-            <Input id="pw" type="password" dir="ltr" minLength={8} required value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" />
+            <Input
+              id="pw"
+              type="password"
+              dir="ltr"
+              minLength={8}
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+            />
           </div>
-          <Button type="submit" disabled={busy} className="w-full rounded-full">{t({ fa: "ذخیره", en: "Save" })}</Button>
+          <Button type="submit" disabled={busy} className="w-full rounded-full">
+            {t({ fa: "ذخیره", en: "Save" })}
+          </Button>
         </form>
       ) : (
-        <p className="mt-4 text-muted-foreground">{t({ fa: "این صفحه را از لینک ایمیل بازیابی باز کن.", en: "Open this page from your recovery email link." })}</p>
+        <p className="mt-4 text-muted-foreground">
+          {t({
+            fa: "این صفحه را از لینک ایمیل بازیابی باز کن.",
+            en: "Open this page from your recovery email link.",
+          })}
+        </p>
       )}
     </div>
   );

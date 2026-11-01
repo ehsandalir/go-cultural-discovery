@@ -7,7 +7,15 @@ describe("safe OAuth return paths", () => {
     expect(authReturnPath("/profile")).toBe("/profile");
   });
   it("rejects external, ambiguous, and looping destinations", () => {
-    for (const value of ["https://evil.example", "//evil.example", "/\\evil.example", "/auth", "javascript:alert(1)", "", null]) {
+    for (const value of [
+      "https://evil.example",
+      "//evil.example",
+      "/\\evil.example",
+      "/auth",
+      "javascript:alert(1)",
+      "",
+      null,
+    ]) {
       expect(authReturnPath(value)).toBe("/profile");
     }
   });
