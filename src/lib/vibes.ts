@@ -2,7 +2,7 @@ import type { Bi } from "./i18n";
 
 /**
  * Canonical GO product constants (Phase 1 preview only).
- * Vibe CRUD and content tagging arrive in Phase 2; the DNA algorithm in Phase 3.
+ * Vibe CRUD and content tagging arrive in Phase 2; the Vibe profile algorithm in Phase 3.
  */
 
 export type QuadrantId = "dark-deep" | "dark-light" | "bright-deep" | "bright-light";
@@ -100,7 +100,7 @@ export const getVibe = (id: string) => VIBES.find((v) => v.id === id);
 /** Content rule (enforced from Phase 2): one primary vibe, up to four secondary vibes. */
 export const MAX_SECONDARY_VIBES = 4;
 
-export const DNA_DIMENSIONS: { id: string; name: Bi }[] = [
+export const VIBE_DIMENSIONS: { id: string; name: Bi }[] = [
   { id: "emotional-depth", name: { fa: "عمق احساسی", en: "Emotional Depth" } },
   { id: "complexity-seeking", name: { fa: "پیچیدگی‌طلبی", en: "Complexity Seeking" } },
   { id: "novelty-seeking", name: { fa: "تازگی‌طلبی", en: "Novelty Seeking" } },
