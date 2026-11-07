@@ -11,7 +11,7 @@ export const Route = createFileRoute("/explore/")({
 });
 type Sample = { number: number; block: number; position: number; name: string; vibe: string };
 /** Only explicit fictional demonstration rooms. No real identities or privacy-dependent data. */
-const SAMPLES: Sample[] = [
+export const SAMPLES: Sample[] = [
   { number: 101, block: 0, position: 55, name: "Orion", vibe: "quiet-wisdom" },
   { number: 102, block: 0, position: 54, name: "Blue Hour", vibe: "melancholic-beauty" },
   { number: 103, block: 0, position: 45, name: "Analog Soul", vibe: "playful-joy" },
@@ -23,7 +23,7 @@ const SAMPLES: Sample[] = [
   { number: 109, block: 4, position: 55, name: "The Loop", vibe: "beautiful-chaos" },
   { number: 110, block: 5, position: 55, name: "Paper Planets", vibe: "romantic-longing" },
 ];
-const POSITIONS = Array.from({ length: 100 }, (_, i) => i);
+export const POSITIONS = Array.from({ length: 100 }, (_, i) => i);
 
 function GoExplore() {
   const { t } = useI18n();
