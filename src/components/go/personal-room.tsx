@@ -4,6 +4,7 @@ import { BookOpen, Clapperboard, Compass, Headphones, ChevronLeft, ChevronRight,
 import { useSession } from "@/hooks/use-session";
 import { useI18n } from "@/lib/i18n";
 import { ROOM_PALETTES } from "@/lib/personal-room";
+import { VIBES } from "@/lib/vibes";
 
 const WALLS = [
   { id: "watch", title: { fa: "دیوار سینما", en: "Cinema wall" }, subtitle: { fa: "فیلم‌ها و تجربه‌های تماشا", en: "Films and viewing experiences" } },
@@ -19,6 +20,9 @@ export function PersonalRoomHero() {
   const [palette, setPalette] = useState(0);
   const colors = ROOM_PALETTES[palette]?.colors ?? ["#DDECF1", "#85B4C8", "#415B76"];
   const current = WALLS[wall];
+  const [showVibe, setShowVibe] = useState(false);
+  const [vibeId, setVibeId] = useState<string | null>(null);
+  const activeVibe = VIBES.find(v => v.id === vibeId);
   const move = (delta: number) => setWall(value => (value + delta + WALLS.length) % WALLS.length);
   return (
     <section className="py-6 md:py-10" aria-label={t({ fa: "اتاق چهار دیواری من", en: "My four-wall room" })}>
@@ -52,7 +56,7 @@ export function PersonalRoomHero() {
             ) : (
               <div className="flex flex-wrap justify-center gap-3">
                 <Link to="/profile" className="rounded-full border border-white/50 px-5 py-3 text-sm hover:bg-white/10">{t({ fa: "شناسه و پروفایل", en: "ID & profile" })}</Link>
-                <Link to="/discover" className="rounded-full border border-white/50 px-5 py-3 text-sm hover:bg-white/10">GoVibe / Discover</Link>
+                <button type="button" onClick={() => setShowVibe(v => !v)} className="rounded-full border border-white/50 px-5 py-3 text-sm hover:bg-white/10">GoVibe</button>
               </div>
             )}
           </div>
@@ -71,10 +75,23 @@ export function PersonalRoomHero() {
         {ROOM_PALETTES.map((item, index) => <button key={item.id} type="button" aria-label={t(item.label)} title={t(item.label)} aria-pressed={palette === index} onClick={() => setPalette(index)} className={`flex h-9 w-12 overflow-hidden rounded-lg border-2 ${palette === index ? "border-primary" : "border-transparent"}`}>{item.colors.map(c => <span key={c} className="h-full flex-1" style={{ backgroundColor: c }} />)}</button>)}
         <span className="text-xs text-muted-foreground">{t({ fa: "پیش‌نمایش؛ ذخیره پالت هنوز متصل نیست", en: "Preview only; palette persistence not connected" })}</span>
       </div>
+      {showVibe && (
+        <div className="mt-5 rounded-2xl border bg-card p-5">
+          <h3 className="text-lg font-semibold">GoVibe</h3>
+          <p className="mt-1 text-sm text-muted-foreground">{t({ fa: "نمایش آزمایشی ۲۴ وایب؛ تحلیل شخصی پس از اتصال داده‌های واقعی فعال می‌شود.", en: "Preview of 24 vibes; personal analysis requires real user data." })}</p>
+          <div className="relative mx-auto mt-5 aspect-square w-full max-w-sm overflow-hidden rounded-xl border bg-background" role="img" aria-label={t({ fa: "نمودار دکارتی وایب", en: "Cartesian Vibe chart" })}>
+            <div className="absolute inset-y-0 left-1/2 border-l border-border" />
+            <div className="absolute inset-x-0 top-1/2 border-t border-border" />
+            {VIBES.map(v => <button key={v.id} type="button" title={t(v.name)} aria-label={t(v.name)} aria-pressed={vibeId === v.id} onClick={() => setVibeId(v.id)} style={{ left: `${v.x}%`, bottom: `${v.y}%` }} className={`absolute size-3 -translate-x-1/2 translate-y-1/2 rounded-full border border-background ${vibeId === v.id ? "bg-primary ring-4 ring-primary/20" : "bg-muted-foreground"}`} />)}
+          </div>
+          <p className="mt-3 text-center text-sm">{activeVibe ? t(activeVibe.name) : t({ fa: "برای مشاهده نام، یک نقطه را انتخاب کن", en: "Select a point to see its name" })}</p>
+        </div>
+      )}
       <nav className="mt-6 flex flex-wrap gap-3 text-sm" aria-label={t({ fa: "مسیرهای GO", en: "GO navigation" })}>
         <Link to="/discover" className="inline-flex items-center gap-2 rounded-full border px-4 py-2"><Compass size={16} />GoDiscover</Link>
-        <Link to="/explore/$module" params={{ module: "watch" }} className="inline-flex items-center gap-2 rounded-full border px-4 py-2"><DoorOpen size={16} />GoExplore / Watch</Link>
+        <Link to="/explore/$module" params={{ module: "watch" }} className="inline-flex items-center gap-2 rounded-full border px-4 py-2"><DoorOpen size={16} />GoWatch</Link>
         <Link to="/profile" className="inline-flex items-center gap-2 rounded-full border px-4 py-2"><UserRound size={16} />ID / Cover</Link>
+        <Link to="/explore" className="inline-flex items-center gap-2 rounded-full border px-4 py-2"><Compass size={16} />GoExplore</Link>
       </nav>
     </section>
   );
