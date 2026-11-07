@@ -75,7 +75,7 @@ export function SpectrumMap({
               title={t(v.name)}
               aria-label={t(v.name)}
               onClick={() => onSelect(v.id)}
-              style={{ left: `${v.x}%`, bottom: `${100 - v.y}%` }}
+              style={{ left: `${v.x}%`, bottom: `${v.y}%` }}
               className={cn(
                 "absolute size-3.5 -translate-x-1/2 translate-y-1/2 rounded-full transition-transform hover:scale-150",
                 q.bgClass,
@@ -91,7 +91,7 @@ export function SpectrumMap({
           {t({ fa: "روشن", en: "Bright" })}
         </span>
         <span className="absolute left-1/2 top-1 -translate-x-1/2 text-[10px] text-muted-foreground">
-          {t({ fa: "عمیق", en: "Deep" })}
+          {t({ fa: "سبک", en: "Light" })}
         </span>
         <span className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-muted-foreground">
           {t({ fa: "سبک", en: "Light" })}
