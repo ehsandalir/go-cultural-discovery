@@ -1,296 +1,81 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, Paintbrush, Sparkles } from "lucide-react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { BookOpen, Clapperboard, Compass, Headphones, ChevronLeft, ChevronRight, UserRound, Palette, DoorOpen } from "lucide-react";
 import { useSession } from "@/hooks/use-session";
 import { useI18n } from "@/lib/i18n";
-import { VIBES } from "@/lib/vibes";
-import { ROOM_PALETTES, type RoomPaletteId } from "@/lib/personal-room";
-import { generatePersonalRoom, getPersonalRoom } from "@/lib/personal-room.functions";
+import { ROOM_PALETTES } from "@/lib/personal-room";
 
-type Hotspot = {
-  id: string;
-  href?: string;
-  x: number;
-  y: number;
-  name: { fa: string; en: string };
-};
-const HOTSPOTS: Hotspot[] = [
-  { id: "desk", href: "/", x: 35, y: 72, name: { fa: "میز من", en: "My desk" } },
-  { id: "listen", href: "/explore/listen", x: 13, y: 31, name: { fa: "شنیدن", en: "Listen" } },
-  { id: "read", href: "/explore/read", x: 84, y: 33, name: { fa: "خواندن", en: "Read" } },
-  { id: "watch", href: "/explore/watch", x: 82, y: 80, name: { fa: "تماشا", en: "Watch" } },
-  { id: "style", x: 81, y: 63, name: { fa: "استایل · به‌زودی", en: "Style · soon" } },
-  { id: "dna", x: 69, y: 50, name: { fa: "آینهٔ DNA · به‌زودی", en: "DNA mirror · soon" } },
-  { id: "discover", href: "/discover", x: 29, y: 33, name: { fa: "کشف", en: "Discover" } },
-  { id: "journey", x: 67, y: 27, name: { fa: "سفر من · به‌زودی", en: "My journey · soon" } },
-];
+const WALLS = [
+  { id: "watch", title: { fa: "دیوار سینما", en: "Cinema wall" }, subtitle: { fa: "فیلم‌ها و تجربه‌های تماشا", en: "Films and viewing experiences" } },
+  { id: "read", title: { fa: "دیوار کتاب", en: "Reading wall" }, subtitle: { fa: "کتاب‌ها و داستان‌ها", en: "Books and stories" } },
+  { id: "listen", title: { fa: "دیوار موسیقی", en: "Listening wall" }, subtitle: { fa: "موسیقی و صدا", en: "Music and sound" } },
+  { id: "identity", title: { fa: "دیوار من", en: "My wall" }, subtitle: { fa: "هویت، کاور و وایب", en: "Identity, cover and Vibe" } },
+] as const;
 
 export function PersonalRoomHero() {
-  const { user, ready } = useSession();
   const { t } = useI18n();
-  const client = useQueryClient();
-  const room = useQuery({
-    queryKey: ["go-personal-room", user?.id],
-    queryFn: () => getPersonalRoom(),
-    enabled: !!user,
-    staleTime: 45 * 60 * 1000,
-    retry: false,
-  });
-  const [paletteId, setPaletteId] = useState<RoomPaletteId | null>(null);
-  const [vibeIds, setVibeIds] = useState<string[]>([]);
-  const [aiConsent, setAiConsent] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    const saved = room.data;
-    if (!saved) return;
-    if (ROOM_PALETTES.some((p) => p.id === saved.paletteId))
-      setPaletteId(saved.paletteId as RoomPaletteId);
-    setVibeIds(saved.vibeIds.filter((id) => VIBES.some((v) => v.id === id)).slice(0, 3));
-  }, [room.data]);
-
-  const chooseVibe = (id: string) =>
-    setVibeIds((current) =>
-      current.includes(id)
-        ? current.filter((x) => x !== id)
-        : current.length < 3
-          ? [...current, id]
-          : current,
-    );
-
-  async function createRoom() {
-    if (!user || !paletteId || !aiConsent || isGenerating) return;
-    setErrorMessage("");
-    setIsGenerating(true);
-    try {
-      await generatePersonalRoom({ data: { paletteId, vibeIds, aiConsent: true } });
-      await client.invalidateQueries({ queryKey: ["go-personal-room", user.id] });
-      toast.success(t({ fa: "اتاق تو ساخته شد", en: "Your room is ready" }));
-      setAiConsent(false);
-    } catch (err) {
-      setErrorMessage(
-        err instanceof Error
-          ? err.message
-          : t({ fa: "ساخت اتاق انجام نشد", en: "Room generation failed" }),
-      );
-    } finally {
-      setIsGenerating(false);
-    }
-  }
-
+  const { user } = useSession();
+  const [wall, setWall] = useState(0);
+  const [palette, setPalette] = useState(0);
+  const colors = ROOM_PALETTES[palette]?.colors ?? ["#DDECF1", "#85B4C8", "#415B76"];
+  const current = WALLS[wall];
+  const move = (delta: number) => setWall(value => (value + delta + WALLS.length) % WALLS.length);
   return (
-    <section className="py-6 md:py-10">
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
+    <section className="py-6 md:py-10" aria-label={t({ fa: "اتاق چهار دیواری من", en: "My four-wall room" })}>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="mb-1 text-xs tracking-[0.18em] text-primary" dir="ltr">
-            GO / YOUR ROOM
-          </p>
-          <h1 className="text-3xl font-bold md:text-5xl">
-            {t({ fa: "این اتاق، شبیه تو ساخته می‌شه.", en: "A room made to feel like you." })}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t({
-              fa: "نقشهٔ اتاق برای همه یکیه؛ قصه، رنگ و چیزهای کوچیکش فقط مال توئه.",
-              en: "The room layout is shared. Its story, colors and small details are yours alone.",
-            })}
-          </p>
+          <p className="text-xs tracking-[0.2em] text-muted-foreground" dir="ltr">GO / ROOM</p>
+          <h1 className="text-3xl font-semibold">{t({ fa: "اتاق من", en: "My Room" })}</h1>
         </div>
-        <span className="rounded-full border px-3 py-1 text-xs text-muted-foreground">
-          {room.data?.imageUrl
-            ? t({ fa: "اتاق شخصی من", en: "My personal room" })
-            : t({ fa: "اسکچ اولیه", en: "Base sketch" })}
-        </span>
-      </div>
-
-      <div
-        className="relative isolate aspect-video overflow-hidden rounded-2xl border bg-[#e9ece9]"
-        dir="ltr"
-      >
-        <img
-          src={room.data?.imageUrl || "/room-layout.svg"}
-          alt={t({
-            fa: "نمای دوبعدی اتاق GO با پنجرهٔ رو به شهر و بخش‌های فرهنگی",
-            en: "2D GO room, city window and cultural corners",
-          })}
-          className="absolute inset-0 h-full w-full object-contain"
-        />
-        {HOTSPOTS.map((h) =>
-          h.href ? (
-            <a
-              key={h.id}
-              href={h.href}
-              className="group absolute z-10 flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-700/45 bg-white/70 px-2 text-[10px] font-semibold text-slate-800 shadow-sm backdrop-blur-sm transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 sm:text-xs"
-              style={{ left: `${h.x}%`, top: `${h.y}%` }}
-              aria-label={t(h.name)}
-              title={t(h.name)}
-            >
-              {t(h.name)}
-            </a>
-          ) : (
-            <span
-              key={h.id}
-              className="absolute z-10 hidden -translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-500/30 bg-white/60 px-1.5 py-1 text-[9px] text-slate-600 sm:block"
-              style={{ left: `${h.x}%`, top: `${h.y}%` }}
-              title={t(h.name)}
-            >
-              {t(h.name)}
-            </span>
-          ),
-        )}
-      </div>
-
-      <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
-        <span>{t({ fa: "میز", en: "Desk" })}</span> ·
-        <Link
-          to="/explore/$module"
-          params={{ module: "watch" }}
-          className="underline underline-offset-4"
-        >
-          GoWatch
-        </Link>{" "}
-        ·
-        <Link
-          to="/explore/$module"
-          params={{ module: "read" }}
-          className="underline underline-offset-4"
-        >
-          GoRead
-        </Link>{" "}
-        ·
-        <Link
-          to="/explore/$module"
-          params={{ module: "listen" }}
-          className="underline underline-offset-4"
-        >
-          GoListen
-        </Link>{" "}
-        ·
-        <Link to="/discover" className="underline underline-offset-4">
-          {t({ fa: "کشف", en: "Discover" })}
-        </Link>
-      </div>
-
-      <div className="mt-8 rounded-2xl border bg-card p-5 md:p-7">
-        <div className="flex items-center gap-2">
-          <Paintbrush className="size-5 text-primary" />
-          <h2 className="text-xl font-semibold">
-            {t({
-              fa: "کدوم ترکیب رنگ بیشتر به حال‌وهوات نزدیکه؟",
-              en: "Which color mix feels most like you?",
-            })}
-          </h2>
+        <div className="rounded-full border px-4 py-2 text-xs" dir="ltr">
+          {user ? `ID: ${user.id.slice(0, 8)}` : t({ fa: "اتاق مهمان", en: "Guest room" })}
         </div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {t({
-            fa: "یکی از شش ترکیب رو انتخاب کن؛ قرار نیست تم کل GO عوض بشه.",
-            en: "Pick one of six combinations. The GO app theme stays as it is.",
-          })}
-        </p>
-        <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {ROOM_PALETTES.map((p) => {
-            const selected = paletteId === p.id;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                aria-pressed={selected}
-                onClick={() => setPaletteId(p.id)}
-                className={`relative overflow-hidden rounded-xl border-2 p-3 text-start transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selected ? "border-primary bg-primary/10" : "border-border bg-background hover:border-primary/40"}`}
-              >
-                <span className="mb-3 flex h-12 overflow-hidden rounded-lg">
-                  {p.colors.map((c) => (
-                    <span key={c} className="h-full flex-1" style={{ backgroundColor: c }} />
-                  ))}
-                </span>
-                <span className="block pe-6 text-sm font-medium">{t(p.label)}</span>
-                {selected && (
-                  <Check className="absolute end-3 top-3 size-4 text-primary" aria-hidden />
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="mt-7">
-          <h3 className="text-base font-semibold">
-            {t({
-              fa: "این روزها به چه حسی نزدیک‌تری؟",
-              en: "What feelings are close to you lately?",
-            })}
-          </h3>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {t({ fa: "تا سه وایب دلخواه؛ اختیاری", en: "Up to three vibes, optional" })}
-          </p>
-          <div className="mt-3 flex max-h-44 flex-wrap gap-2 overflow-y-auto">
-            {VIBES.map((v) => (
-              <button
-                key={v.id}
-                type="button"
-                aria-pressed={vibeIds.includes(v.id)}
-                onClick={() => chooseVibe(v.id)}
-                className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${vibeIds.includes(v.id) ? "border-primary bg-primary/15 text-primary" : "border-border hover:border-primary/40"}`}
-              >
-                {t(v.name)} {vibeIds.includes(v.id) ? "✓" : ""}
-              </button>
-            ))}
+      </div>
+      <div className="relative mx-auto w-full max-w-4xl overflow-hidden rounded-[2rem] border border-white/15 bg-[#101218] text-white shadow-2xl" dir="ltr">
+        <div className="relative min-h-[460px] overflow-hidden p-5 sm:min-h-[540px] sm:p-8" style={{ background: `radial-gradient(ellipse at 50% 25%, ${colors[1]}44, transparent 65%), #11151c` }}>
+          <div className="pointer-events-none absolute inset-x-[8%] top-[12%] bottom-[17%] border-x-2 border-t-2 border-white/15" style={{ boxShadow: `inset 0 0 100px ${colors[2]}44` }} />
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-[22%] origin-bottom [transform:perspective(420px)_rotateX(55deg)] border-t border-white/25" style={{ background: `linear-gradient(0deg,#090b0f,${colors[2]}77)` }} />
+          <div className="relative z-10 flex items-center justify-between gap-2">
+            <span className="text-[11px] tracking-[0.18em] text-white/65">WALL {wall + 1} / 4</span>
+            <span className="rounded-full border border-white/25 px-3 py-1 text-[11px]">GO ROOM</span>
+          </div>
+          <div className="relative z-10 mx-auto mt-14 flex max-w-md flex-col items-center gap-5 text-center sm:mt-20">
+            <div className="flex h-28 w-28 items-center justify-center rounded-2xl border border-white/25 bg-white/5 shadow-[0_0_50px_rgba(255,255,255,0.07)]">
+              {wall === 0 ? <Clapperboard size={52} strokeWidth={1} /> : wall === 1 ? <BookOpen size={52} strokeWidth={1} /> : wall === 2 ? <Headphones size={52} strokeWidth={1} /> : <UserRound size={52} strokeWidth={1} />}
+            </div>
+            <h2 className="text-2xl font-medium">{t(current.title)}</h2>
+            <p className="text-sm text-white/65">{t(current.subtitle)}</p>
+            {wall < 3 ? (
+              <Link to="/explore/$module" params={{ module: current.id as "watch" | "read" | "listen" }} className="rounded-full border border-white/50 bg-white px-6 py-3 text-sm font-medium text-black hover:bg-white/85">
+                {t({ fa: "ورود به ماژول", en: "Open module" })}
+              </Link>
+            ) : (
+              <div className="flex flex-wrap justify-center gap-3">
+                <Link to="/profile" className="rounded-full border border-white/50 px-5 py-3 text-sm hover:bg-white/10">{t({ fa: "شناسه و پروفایل", en: "ID & profile" })}</Link>
+                <Link to="/discover" className="rounded-full border border-white/50 px-5 py-3 text-sm hover:bg-white/10">GoVibe / Discover</Link>
+              </div>
+            )}
+          </div>
+          <div className="absolute bottom-7 left-5 right-5 z-10 flex items-center justify-between">
+            <button type="button" onClick={() => move(-1)} aria-label={t({ fa: "دیوار قبلی", en: "Previous wall" })} className="flex size-12 items-center justify-center rounded-full border border-white/30 bg-black/50 hover:bg-white/15"><ChevronLeft /></button>
+            <div className="flex gap-2" aria-label={t({ fa: "انتخاب دیوار", en: "Select wall" })}>
+              {WALLS.map((item, index) => <button key={item.id} type="button" aria-label={t(item.title)} aria-pressed={wall === index} onClick={() => setWall(index)} className={`h-2.5 rounded-full transition-all ${wall === index ? "w-7 bg-white" : "w-2.5 bg-white/35"}`} />)}
+            </div>
+            <button type="button" onClick={() => move(1)} aria-label={t({ fa: "دیوار بعدی", en: "Next wall" })} className="flex size-12 items-center justify-center rounded-full border border-white/30 bg-black/50 hover:bg-white/15"><ChevronRight /></button>
           </div>
         </div>
-
-        {ready && user ? (
-          <>
-            <label className="mt-6 flex cursor-pointer items-start gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={aiConsent}
-                onChange={(e) => setAiConsent(e.target.checked)}
-                className="mt-1 accent-primary"
-              />
-              <span>
-                {t({
-                  fa: "موافقم وایب‌ها، ترکیب رنگ و عنوان آثار فرهنگی ذخیره‌شده‌ام برای ساخت این تصویر به مدل تصویری گوگل فرستاده بشن؛ نه اطلاعات هویتی من.",
-                  en: "I agree to send my chosen vibes, colors and saved cultural titles to Google's image model for this artwork — not my identity.",
-                })}
-              </span>
-            </label>
-            <Button
-              type="button"
-              disabled={!paletteId || !aiConsent || isGenerating}
-              onClick={createRoom}
-              className="mt-5 rounded-full"
-            >
-              <Sparkles className="size-4" />
-              {isGenerating
-                ? t({ fa: "دارم اتاقت رو می‌سازم…", en: "Creating your room…" })
-                : room.data?.imageUrl
-                  ? t({ fa: "یه نسخهٔ تازه از اتاقم", en: "Create a fresh version" })
-                  : t({ fa: "اتاق من رو بساز", en: "Create my room" })}
-            </Button>
-          </>
-        ) : (
-          <Button asChild className="mt-5 rounded-full">
-            <Link to="/auth" search={{ next: "/" }}>
-              {t({ fa: "برای ساخت اتاقت وارد شو", en: "Sign in to create your room" })}
-            </Link>
-          </Button>
-        )}
-        {errorMessage && (
-          <p className="mt-4 text-sm text-destructive" role="alert">
-            {errorMessage}
-          </p>
-        )}
-        {room.isError && (
-          <p className="mt-4 text-sm text-muted-foreground">
-            {t({
-              fa: "داده‌های اتاق در دسترس نیست؛ اسکچ اولیه نمایش داده می‌شه.",
-              en: "Your room data is unavailable, so the base sketch is shown.",
-            })}
-          </p>
-        )}
       </div>
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <Palette size={17} aria-hidden />
+        <span className="text-sm">{t({ fa: "پالت اتاق", en: "Room palette" })}</span>
+        {ROOM_PALETTES.map((item, index) => <button key={item.id} type="button" aria-label={t(item.label)} title={t(item.label)} aria-pressed={palette === index} onClick={() => setPalette(index)} className={`flex h-9 w-12 overflow-hidden rounded-lg border-2 ${palette === index ? "border-primary" : "border-transparent"}`}>{item.colors.map(c => <span key={c} className="h-full flex-1" style={{ backgroundColor: c }} />)}</button>)}
+        <span className="text-xs text-muted-foreground">{t({ fa: "پیش‌نمایش؛ ذخیره پالت هنوز متصل نیست", en: "Preview only; palette persistence not connected" })}</span>
+      </div>
+      <nav className="mt-6 flex flex-wrap gap-3 text-sm" aria-label={t({ fa: "مسیرهای GO", en: "GO navigation" })}>
+        <Link to="/discover" className="inline-flex items-center gap-2 rounded-full border px-4 py-2"><Compass size={16} />GoDiscover</Link>
+        <Link to="/explore/$module" params={{ module: "watch" }} className="inline-flex items-center gap-2 rounded-full border px-4 py-2"><DoorOpen size={16} />GoExplore / Watch</Link>
+        <Link to="/profile" className="inline-flex items-center gap-2 rounded-full border px-4 py-2"><UserRound size={16} />ID / Cover</Link>
+      </nav>
     </section>
   );
 }
