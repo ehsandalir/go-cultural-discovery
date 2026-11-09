@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Dna, Lock } from "lucide-react";
+import { Activity, Lock } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { QUADRANTS, VIBES, getVibe, DNA_DIMENSIONS } from "@/lib/vibes";
+import { QUADRANTS, VIBES, getVibe, VIBE_DIMENSIONS } from "@/lib/vibes";
 import { DEMO_WORKS, MODULES } from "@/lib/modules";
 import { VibeChip, VibeTag, SpectrumMap } from "@/components/go/vibe";
 import { DemoBadge, PageHeader, PhaseBadge } from "@/components/go/shell";
@@ -130,20 +130,20 @@ function Discover() {
       <section className="pb-16">
         <div className="rounded-2xl border border-dashed bg-card/50 p-6 md:p-8">
           <div className="flex flex-wrap items-center gap-3">
-            <Dna className="size-6 text-primary" />
+            <Activity className="size-6 text-primary" />
             <h2 className="text-2xl font-semibold">
-              {t({ fa: "شخصی‌سازی‌شده برای DNA تو", en: "Personalized for Your DNA" })}
+              {t({ fa: "GoVibe — خودشناسی فرهنگی", en: "GoVibe — Cultural self-discovery" })}
             </h2>
             <PhaseBadge phase={3} />
           </div>
           <p className="mt-3 max-w-2xl text-muted-foreground">
             {t({
-              fa: "GO DNA سلیقهٔ فرهنگی‌ات را در شش بُعد غیرِبالینی توصیف می‌کند. الگوریتم و پیشنهادهای شخصی در فاز ۳ ساخته می‌شوند؛ تا آن زمان هیچ پیشنهاد ساختگی نمایش نمی‌دهیم.",
-              en: "GO DNA describes your cultural taste across six non-clinical dimensions. The algorithm and personal picks are built in Phase 3; until then we show no fabricated recommendations.",
+              fa: "GoVibe سلیقهٔ فرهنگی‌ات را در شش بُعد غیرِبالینی توصیف می‌کند. الگوریتم و پیشنهادهای شخصی در فاز ۳ ساخته می‌شوند؛ تا آن زمان هیچ پیشنهاد ساختگی نمایش نمی‌دهیم.",
+              en: "GoVibe describes your cultural taste across six non-clinical dimensions. The algorithm and personal picks are built in Phase 3; until then we show no fabricated recommendations.",
             })}
           </p>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {DNA_DIMENSIONS.map((d) => (
+            {VIBE_DIMENSIONS.map((d) => (
               <li
                 key={d.id}
                 className="flex items-center justify-between rounded-xl border bg-background px-4 py-3 text-sm"

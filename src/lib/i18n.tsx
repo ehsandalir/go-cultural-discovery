@@ -9,8 +9,8 @@ const I18nContext = createContext<Ctx | null>(null);
 const KEY = "go.lang";
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  // Persian-first: SSR and first paint are always fa/RTL; stored choice applies after hydration.
-  const [lang, setLangState] = useState<Lang>("fa");
+  // English-first: SSR and first paint are always en/LTR; stored choice applies after hydration.
+  const [lang, setLangState] = useState<Lang>("en");
 
   useEffect(() => {
     const stored = window.localStorage.getItem(KEY);
