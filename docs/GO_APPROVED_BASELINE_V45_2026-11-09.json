@@ -1,0 +1,24 @@
+{
+  "baseline_id": "GO-APPROVED-V45-2026-11-09",
+  "status": "current-final-approved",
+  "approved_by": "Ehsan",
+  "approved_on": "2026-11-09",
+  "site_project_id": "appgprj_6ae46c0e73a481919fd6d2ce88f83d1e",
+  "approved_site_version": 45,
+  "approved_site_version_id": "appgprj_6ae46c0e73a481919fd6d2ce88f83d1e~appgver_f43f74653b4481919797c68f686a8a72",
+  "approved_product_commit": "9d48a77b37f6ae243c1bf46eedf5df9c7c11b530",
+  "source_tag": "go-approved-v45-2026-11-09",
+  "reference_document": "docs/GO_APPROVED_BASELINE_V45_2026-11-09.md",
+  "status_report": "docs/GO_STATUS_REPORT_2026-11-09.md",
+  "conflict_rule": "This baseline supersedes conflicting older GO project records until a later explicit user-approved replacement.",
+  "documentation_only": true,
+  "deployment_unchanged": true,
+  "verification": {
+    "tests_passed": 212,
+    "test_files_passed": 49,
+    "typecheck": "passed",
+    "production_build": "passed",
+    "real_device_qa": "not-performed",
+    "live_admin_roles": "unverified"
+  }
+}
