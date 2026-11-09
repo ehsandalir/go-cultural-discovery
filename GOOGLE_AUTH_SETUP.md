@@ -1,3 +1,5 @@
+> **Current authority — 2026-11-09:** Ehsan approved GO **Sites v45**, source `9d48a77b37f6ae243c1bf46eedf5df9c7c11b530`, as the current final approved baseline. [Read the approved baseline](docs/GO_APPROVED_BASELINE_V45_2026-11-09.md) and [status report](docs/GO_STATUS_REPORT_2026-11-09.md). They supersede conflicting historical instructions below. This GitHub branch's application code has not been synchronized to v45 by this documentation update; do not deploy its older code as the approved release.
+
 # GO — Google sign-in release checklist
 
 > This repository is a standalone source snapshot of a Lovable Cloud project. Changes to GitHub do not automatically update the Lovable preview unless Git sync is explicitly connected. Never put Google OAuth secrets or service-role keys in this repository.
