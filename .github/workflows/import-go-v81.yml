@@ -1,0 +1,64 @@
+name: Import exact GO Sites version 81
+on:
+  push:
+    branches: [go-v81-import-2026-11-12]
+    paths: ['transfer/READY']
+permissions:
+  contents: write
+jobs:
+  import-version:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+      - name: Verify archive and import exact source into main
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, subprocess, tempfile, zipfile
+          root = pathlib.Path.cwd()
+          manifest = json.loads((root / 'transfer/manifest.json').read_text())
+          archive = pathlib.Path(tempfile.mkdtemp(prefix='go-v81-')) / 'source.zip'
+          with archive.open('wb') as target:
+              for part in manifest['parts']:
+                  data = (root / part['path']).read_bytes()
+                  assert len(data) == part['size'], 'Part size mismatch'
+                  assert hashlib.sha256(data).hexdigest() == part['sha256'], 'Part checksum mismatch'
+                  target.write(data)
+          assert archive.stat().st_size == manifest['archive_size'], 'Archive size mismatch'
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == manifest['archive_sha256'], 'Archive checksum mismatch'
+          def git(*args):
+              return subprocess.check_output(['git', *args], text=True).strip()
+          subprocess.run(['git', 'fetch', 'origin', 'main'], check=True)
+          assert git('rev-parse', 'origin/main') == manifest['expected_main_commit'], 'Main changed; refusing to overwrite it'
+          subprocess.run(['git', 'checkout', '-B', 'main', 'origin/main'], check=True)
+          subprocess.run(['git', 'rm', '-rf', '--ignore-unmatch', '.'], check=True, stdout=subprocess.DEVNULL)
+          with zipfile.ZipFile(archive) as source:
+              assert source.testzip() is None, 'ZIP integrity failure'
+              assert len(source.infolist()) == manifest['source_files'], 'Source file count mismatch'
+              for item in source.infolist():
+                  parts = pathlib.PurePosixPath(item.filename).parts
+                  assert parts[0] == 'GO-v81' and len(parts) > 1
+                  assert '..' not in parts and not item.is_dir()
+                  mode = item.external_attr >> 16
+                  assert mode & 0o170000 == 0o100000, 'Only regular files are allowed'
+                  dest = root.joinpath(*parts[1:])
+                  assert dest.is_relative_to(root)
+                  dest.parent.mkdir(parents=True, exist_ok=True)
+                  dest.write_bytes(source.read(item))
+                  dest.chmod(0o755 if mode & 0o111 else 0o644)
+          subprocess.run(['git', 'add', '--all'], check=True)
+          tree = git('write-tree')
+          assert tree == manifest['source_tree'], f'Source tree mismatch: {tree}'
+          subprocess.run(['git', 'config', 'user.name', 'Ehsan Dalir'], check=True)
+          subprocess.run(['git', 'config', 'user.email', '34419956+ehsandalir@users.noreply.github.com'], check=True)
+          message = f"backup: import exact GO Sites v81 (2026-11-12)\n\nSites source: {manifest['source_commit']}\nExact source tree: {tree}\nArchive SHA-256: {manifest['archive_sha256']}\nSource and assets only; live database and secrets are separate."
+          subprocess.run(['git', 'commit', '-m', message], check=True)
+          tag = 'go-sites-v81-2026-11-12'
+          subprocess.run(['git', 'tag', tag], check=True)
+          subprocess.run(['git', 'push', '--atomic', 'origin', 'HEAD:refs/heads/main', f'refs/tags/{tag}'], check=True)
+          commit = git('rev-parse', 'HEAD')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write(f"Imported GO Sites v81.\n\nCommit: `{commit}`\n\nVerified source tree: `{tree}`\n\nFiles: {manifest['source_files']}\n")
+          PY
