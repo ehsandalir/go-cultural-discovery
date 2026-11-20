@@ -1,0 +1,1 @@
+revoke all on function public.go_music_catalog(),public.go_music_sync(),public.go_music_request_play(uuid),public.go_music_my_play_usage() from public,anon,authenticated;

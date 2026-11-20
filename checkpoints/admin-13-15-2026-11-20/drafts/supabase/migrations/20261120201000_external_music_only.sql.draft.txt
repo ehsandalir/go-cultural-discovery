@@ -1,0 +1,29 @@
+
+create table go_private.music_key_aliases(alias text primary key,work_key text not null);
+alter table go_private.music_key_aliases enable row level security;
+create function public.go_server_external_music_sources(p_key text) returns jsonb language plpgsql security definer set search_path='' as $$
+begin perform go_private.assert_backup_key(p_key);
+return coalesce((select jsonb_agg(jsonb_build_object('track_id',id,'url',file_url)) from public.go_music_tracks where status='published'),'[]'::jsonb);end $$;
+create function public.go_server_external_music_aliases(p_key text,p_aliases jsonb) returns boolean language plpgsql security definer set search_path='' as $$
+declare a jsonb;begin perform go_private.assert_backup_key(p_key);
+if jsonb_typeof(p_aliases)!='array' or jsonb_array_length(p_aliases)>5000 then raise exception 'invalid_aliases';end if;
+for a in select value from jsonb_array_elements(p_aliases) loop
+if not exists(select 1 from public.go_music_tracks where id=(a->>'trackId')::uuid) or length(a->>'workId') not between 1 and 120 then raise exception 'invalid_alias';end if;
+insert into go_private.music_key_aliases values('library:'||(a->>'trackId'),a->>'workId') on conflict(alias) do update set work_key=excluded.work_key;
+end loop;return true;end $$;
+do $fix$ declare body text;begin
+select pg_get_functiondef('go_private.music_usage(uuid)'::regprocedure) into body;
+body:=replace(body,'select work_key from go_private.music_daily_works','select coalesce((select a.work_key from go_private.music_key_aliases a where a.alias=d.work_key),d.work_key) work_key from go_private.music_daily_works d');
+body:=replace(body,'''library:''||track_id::text from public.go_music_play_events','coalesce((select a.work_key from go_private.music_key_aliases a where a.alias=''library:''||track_id::text),''library:''||track_id::text) from public.go_music_play_events');
+execute body;
+select pg_get_functiondef('go_private.reserve_music(uuid,text)'::regprocedure) into body;
+body:=replace(body,'and work_key=p_work','and coalesce((select a.work_key from go_private.music_key_aliases a where a.alias=go_private.music_daily_works.work_key),work_key)=p_work');
+body:=replace(body,'''library:''||track_id::text=p_work','coalesce((select a.work_key from go_private.music_key_aliases a where a.alias=''library:''||track_id::text),''library:''||track_id::text)=p_work');
+execute body;
+select pg_get_functiondef('public.go_server_music_stream(text,uuid,text,uuid,boolean)'::regprocedure) into body;
+body:=replace(body,'and work_key=p_work','and coalesce((select a.work_key from go_private.music_key_aliases a where a.alias=go_private.music_daily_works.work_key),work_key)=p_work');
+body:=replace(body,'''library:''||track_id::text=p_work','coalesce((select a.work_key from go_private.music_key_aliases a where a.alias=''library:''||track_id::text),''library:''||track_id::text)=p_work');
+execute body;
+end $fix$;
+revoke all on function public.go_server_external_music_sources(text),public.go_server_external_music_aliases(text,jsonb) from public;
+grant execute on function public.go_server_external_music_sources(text),public.go_server_external_music_aliases(text,jsonb) to anon,authenticated;

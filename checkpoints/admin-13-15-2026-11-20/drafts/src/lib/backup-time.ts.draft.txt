@@ -1,0 +1,3 @@
+const format=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tehran',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+export function tehranInput(at:number){return format.format(at).replace(' ','T')}
+export function fromTehranInput(value:string){if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value))throw Error('invalid_time');const target=Date.parse(value+':00Z');let at=target;for(let i=0;i<3;i++){const wall=Date.parse(tehranInput(at)+':00Z');at+=target-wall;}if(tehranInput(at)!==value)throw Error('invalid_time');return at;}

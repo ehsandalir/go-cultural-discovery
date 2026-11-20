@@ -1,0 +1,27 @@
+import {createClient} from '@supabase/supabase-js';
+import {roomBindings} from './room-storage.server';
+import {findWorldWork} from './world-catalog.server';
+import {audioIdentity} from './music-links.server';
+import {directMusicUrl} from '@/features/music/link-csv';
+/** One-time data upgrade only. Playback has no legacy-library fallback. */
+export async function migrateExternalMusicLinks(){
+ const {db}=roomBindings();
+ if(await db.prepare("SELECT id FROM go_policy_rollouts WHERE id='external-audio-only-v1'").first())return {complete:true,migrated:0,alreadyApplied:true};
+ const client=createClient(process.env['SUPABASE_URL']!,process.env['SUPABASE_PUBLISHABLE_KEY']!,{auth:{persistSession:false,autoRefreshToken:false}});
+ const result=await client.rpc('go_server_external_music_sources',{p_key:process.env['GO_BACKUP_KEY']});
+ if(result.error||!Array.isArray(result.data))throw Error('external_music_migration_source_unavailable');
+ const sources=new Map((result.data as {track_id:string;url:string}[]).map(r=>[r.track_id,r.url]));
+ const links=(await db.prepare('SELECT track_id,work_id FROM go_music_library_tracks').all<{track_id:string;work_id:string}>()).results;
+ let migrated=0;const conflicts:string[]=[],aliases:{trackId:string;workId:string}[]=[];
+ for(const row of links){
+  const work=await findWorldWork(db,row.work_id);if(!work||work.cat!=='music')continue;
+  aliases.push({trackId:row.track_id,workId:work.id});
+  if(await db.prepare('SELECT work_id FROM go_music_direct_links WHERE work_id=?').bind(work.id).first())continue;
+  const source=sources.get(row.track_id);if(!source)continue;
+  try{const url=directMusicUrl(source);await db.prepare('INSERT INTO go_music_direct_links(work_id,identity,url,revision,updated_by,updated_at) VALUES(?,?,?,1,?,?)').bind(work.id,audioIdentity(work),url,'go-external-source-upgrade',Date.now()).run();migrated++;}catch{conflicts.push(work.id)}
+ }
+ const alias=await client.rpc('go_server_external_music_aliases',{p_key:process.env['GO_BACKUP_KEY'],p_aliases:aliases});if(alias.error)throw Error('external_music_history_migration_failed');
+ if(conflicts.length)return {complete:false,migrated,conflicts};
+ await db.prepare("INSERT OR IGNORE INTO go_policy_rollouts(id,applied_at) VALUES('external-audio-only-v1',?)").bind(Date.now()).run();
+ return {complete:true,migrated,aliases:aliases.length};
+}
